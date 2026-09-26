@@ -58,44 +58,41 @@ const ChatView = (() => {
     ].join("\n\n");
   }
 
+  function safeParseJson(text) {
+    try { return JSON.parse(text); } catch { return null; }
+  }
+
+  // Single low-level request path for every provider call.
+  async function doFetch(url, headers, body) {
+    const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+    const text = await res.text();
+    return { ok: res.ok, status: res.status, json: safeParseJson(text), rawText: text };
+  }
+
   async function callAnthropic() {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
+    const r = await doFetch(
+      "https://api.anthropic.com/v1/messages",
+      {
         "content-type": "application/json",
         "x-api-key": getAnthropicKey(),
         "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true",
       },
-      body: JSON.stringify({
-        model: getAnthropicModel(),
-        max_tokens: 200,
-        system: buildSystemPrompt(),
-        messages: history,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) return { ok: false, status: res.status, message: data?.error?.message };
-    return { ok: true, text: (data.content || []).map((b) => b.text).join("").trim() };
+      { model: getAnthropicModel(), max_tokens: 200, system: buildSystemPrompt(), messages: history }
+    );
+    if (!r.ok) return { ok: false, status: r.status, message: r.json?.error?.message || r.rawText?.slice(0, 200) };
+    return { ok: true, text: (r.json?.content || []).map((b) => b.text).join("").trim() };
   }
 
   async function callOpenAICompatible() {
     const base = normalizeBaseUrl(getCompatBaseUrl());
-    const res = await fetch(`${base}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${getCompatKey()}`,
-      },
-      body: JSON.stringify({
-        model: getCompatModel(),
-        max_tokens: 200,
-        messages: [{ role: "system", content: buildSystemPrompt() }, ...history],
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) return { ok: false, status: res.status, message: data?.error?.message };
-    return { ok: true, text: (data.choices?.[0]?.message?.content || "").trim() };
+    const r = await doFetch(
+      `${base}/chat/completions`,
+      { "content-type": "application/json", authorization: `Bearer ${getCompatKey()}` },
+      { model: getCompatModel(), max_tokens: 200, messages: [{ role: "system", content: buildSystemPrompt() }, ...history] }
+    );
+    if (!r.ok) return { ok: false, status: r.status, message: r.json?.error?.message || r.rawText?.slice(0, 200) };
+    return { ok: true, text: (r.json?.choices?.[0]?.message?.content || "").trim() };
   }
 
   // Minimal ad-hoc call using whatever credentials are currently typed into
@@ -103,33 +100,26 @@ const ChatView = (() => {
   // "Test Connection" button.
   async function testConnection({ provider, key, baseUrl, model }) {
     try {
-      let res, data;
-      if (provider === "anthropic") {
-        res = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "x-api-key": key,
-            "anthropic-version": "2023-06-01",
-            "anthropic-dangerous-direct-browser-access": "true",
-          },
-          body: JSON.stringify({ model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }),
-        });
-        data = await res.json();
-        if (!res.ok) return { ok: false, message: data?.error?.message || `HTTP ${res.status}` };
-        return { ok: true };
-      }
-      const base = normalizeBaseUrl(baseUrl);
-      res = await fetch(`${base}/chat/completions`, {
-        method: "POST",
-        headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
-        body: JSON.stringify({ model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }),
-      });
-      data = await res.json();
-      if (!res.ok) return { ok: false, message: data?.error?.message || `HTTP ${res.status}` };
+      const r = provider === "anthropic"
+        ? await doFetch(
+            "https://api.anthropic.com/v1/messages",
+            {
+              "content-type": "application/json",
+              "x-api-key": key,
+              "anthropic-version": "2023-06-01",
+              "anthropic-dangerous-direct-browser-access": "true",
+            },
+            { model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }
+          )
+        : await doFetch(
+            `${normalizeBaseUrl(baseUrl)}/chat/completions`,
+            { "content-type": "application/json", authorization: `Bearer ${key}` },
+            { model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }
+          );
+      if (!r.ok) return { ok: false, message: r.json?.error?.message || r.rawText?.slice(0, 200) || `HTTP ${r.status}` };
       return { ok: true };
     } catch (err) {
-      return { ok: false, message: `${err.message}（可能是这个服务商不支持网页直接调用 / CORS）` };
+      return { ok: false, message: `${err.message}（可能是这个服务商不支持网页直接调用 / CORS —— 换成 Anthropic 最简单可靠）` };
     }
   }
 
