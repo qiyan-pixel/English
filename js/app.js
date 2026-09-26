@@ -207,14 +207,26 @@
     if (current) sel.value = current;
   }
 
+  function updateProviderFieldsVisibility() {
+    const provider = $("#apiProviderSelect").value;
+    $("#anthropicFields").hidden = provider !== "anthropic";
+    $("#compatFields").hidden = provider !== "openai-compatible";
+  }
+
   function openSettingsModal() {
     $("#settingsModal").hidden = false;
     populateVoiceSelect();
     setTimeout(populateVoiceSelect, 300); // voices often load async on first visit
     $("#rateRange").value = TTS.getRate();
     $("#rateValue").textContent = TTS.getRate().toFixed(1) + "x";
-    $("#apiModelSelect").value = localStorage.getItem("engcourse_api_model") || "claude-haiku-4-5-20251001";
+
+    $("#apiProviderSelect").value = ChatView.getProvider();
+    updateProviderFieldsVisibility();
+    $("#apiModelSelect").value = ChatView.getAnthropicModel();
     $("#apiKeyInput").value = "";
+    $("#apiBaseUrlInput").value = ChatView.getCompatBaseUrl();
+    $("#apiModelCompatInput").value = ChatView.getCompatModel();
+    $("#apiKeyCompatInput").value = "";
     updateKeyStatus();
   }
   window.openSettingsModal = openSettingsModal;
@@ -224,8 +236,8 @@
   }
 
   function updateKeyStatus() {
-    const has = !!localStorage.getItem("engcourse_api_key");
-    $("#keyStatus").textContent = has ? "✅ 已保存一个 API Key。" : "尚未设置 API Key，AI 对话功能不可用。";
+    const has = ChatView.getProvider() === "anthropic" ? !!ChatView.getAnthropicKey() : !!ChatView.getCompatKey();
+    $("#keyStatus").textContent = has ? "✅ 当前服务商已保存 API Key。" : "当前服务商尚未设置 API Key，AI 对话功能不可用。";
   }
 
   function wireSettings() {
@@ -240,20 +252,42 @@
     });
     $("#testVoiceBtn").addEventListener("click", () => TTS.speak("Hello! This is a test. Are you ready to study English?", {}));
 
-    $("#apiModelSelect").addEventListener("change", (e) => localStorage.setItem("engcourse_api_model", e.target.value));
-    $("#saveKeyBtn").addEventListener("click", () => {
-      const val = $("#apiKeyInput").value.trim();
-      if (!val) { toast("请先输入 API Key"); return; }
-      localStorage.setItem("engcourse_api_key", val);
-      $("#apiKeyInput").value = "";
+    $("#apiProviderSelect").addEventListener("change", (e) => {
+      ChatView.setProvider(e.target.value);
+      updateProviderFieldsVisibility();
       updateKeyStatus();
-      toast("已保存 API Key");
+    });
+    $("#apiModelSelect").addEventListener("change", (e) => localStorage.setItem(ChatView.KEYS.anthropicModel, e.target.value));
+
+    $("#saveKeyBtn").addEventListener("click", () => {
+      const provider = $("#apiProviderSelect").value;
+      ChatView.setProvider(provider);
+      if (provider === "anthropic") {
+        const val = $("#apiKeyInput").value.trim();
+        if (!val) { toast("请先输入 API Key"); return; }
+        localStorage.setItem(ChatView.KEYS.anthropicKey, val);
+        localStorage.setItem(ChatView.KEYS.anthropicModel, $("#apiModelSelect").value);
+        $("#apiKeyInput").value = "";
+      } else {
+        const key = $("#apiKeyCompatInput").value.trim();
+        const base = $("#apiBaseUrlInput").value.trim();
+        const model = $("#apiModelCompatInput").value.trim();
+        if (!key || !base || !model) { toast("请填写完整：接口地址、API Key、模型名称"); return; }
+        localStorage.setItem(ChatView.KEYS.compatKey, key);
+        localStorage.setItem(ChatView.KEYS.compatBaseUrl, base);
+        localStorage.setItem(ChatView.KEYS.compatModel, model);
+        $("#apiKeyCompatInput").value = "";
+      }
+      updateKeyStatus();
+      toast("已保存");
       if (currentView === "chat") ChatView.render();
     });
     $("#clearKeyBtn").addEventListener("click", () => {
-      localStorage.removeItem("engcourse_api_key");
+      const provider = $("#apiProviderSelect").value;
+      if (provider === "anthropic") localStorage.removeItem(ChatView.KEYS.anthropicKey);
+      else localStorage.removeItem(ChatView.KEYS.compatKey);
       updateKeyStatus();
-      toast("已删除 API Key");
+      toast("已删除密钥");
       if (currentView === "chat") ChatView.render();
     });
   }

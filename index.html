@@ -108,7 +108,7 @@
     <section id="view-chat" class="view">
       <h1>AI 自由对话 <span class="beta-tag">Beta</span></h1>
       <p class="subtitle">
-        用你自己的 Anthropic (Claude) API Key 和 AI 自由聊天练习英语。
+        用你自己的 AI 服务 API Key（Anthropic、OpenAI，或 DeepSeek / Kimi / 通义千问等国内的 OpenAI 兼容接口）和 AI 自由聊天练习英语。
         AI 会尽量只用这 6 份课件学过的单词和语法，但这是"尽量"，不是 100% 保证 —
         如果只想用课件内保证不超纲的内容，请用"对话与扩展问答"页面。
       </p>
@@ -164,14 +164,37 @@
       </section>
       <section class="settings-section">
         <h3>🤖 AI 对话 API Key</h3>
-        <p class="hint">密钥只保存在你这台设备的浏览器里（localStorage），不会上传到任何服务器或代码仓库。</p>
-        <label class="field-label">Anthropic API Key</label>
-        <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
-        <label class="field-label">模型 Model</label>
-        <select id="apiModelSelect">
-          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5（推荐，便宜快速）</option>
-          <option value="claude-sonnet-5">Claude Sonnet 5（更聪明，成本更高）</option>
+        <p class="hint">密钥只保存在你这台设备的浏览器里（localStorage），不会上传到任何服务器或代码仓库。每个服务商的设置分开保存，切换服务商不会丢失另一个的 Key。</p>
+        <label class="field-label">AI 服务商 Provider</label>
+        <select id="apiProviderSelect">
+          <option value="anthropic">Anthropic Claude（推荐，官方支持网页直连）</option>
+          <option value="openai-compatible">其他（OpenAI 兼容接口）</option>
         </select>
+
+        <div id="anthropicFields">
+          <label class="field-label">Anthropic API Key</label>
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+          <label class="field-label">模型 Model</label>
+          <select id="apiModelSelect">
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5（推荐，便宜快速）</option>
+            <option value="claude-sonnet-5">Claude Sonnet 5（更聪明，成本更高）</option>
+          </select>
+        </div>
+
+        <div id="compatFields" hidden>
+          <label class="field-label">接口地址 Base URL</label>
+          <input type="text" id="apiBaseUrlInput" placeholder="https://api.deepseek.com/v1">
+          <p class="hint" style="margin:-4px 0 10px">
+            常见地址：OpenAI <code>api.openai.com/v1</code> · DeepSeek <code>api.deepseek.com/v1</code> ·
+            Kimi/Moonshot <code>api.moonshot.cn/v1</code> · 通义千问 <code>dashscope.aliyuncs.com/compatible-mode/v1</code> ·
+            智谱GLM <code>open.bigmodel.cn/api/paas/v4</code>（填到 /v1 或对应版本号为止，不要加 /chat/completions）
+          </p>
+          <label class="field-label">API Key</label>
+          <input type="password" id="apiKeyCompatInput" placeholder="sk-...">
+          <label class="field-label">模型名称 Model name</label>
+          <input type="text" id="apiModelCompatInput" placeholder="例如 deepseek-chat / moonshot-v1-8k / qwen-plus / gpt-4o-mini">
+        </div>
+
         <div class="settings-row">
           <button id="saveKeyBtn" class="btn primary small">保存</button>
           <button id="clearKeyBtn" class="btn danger-ghost small">删除密钥</button>
