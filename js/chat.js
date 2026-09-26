@@ -98,6 +98,41 @@ const ChatView = (() => {
     return { ok: true, text: (data.choices?.[0]?.message?.content || "").trim() };
   }
 
+  // Minimal ad-hoc call using whatever credentials are currently typed into
+  // the settings form (not necessarily saved yet), for the Settings page's
+  // "Test Connection" button.
+  async function testConnection({ provider, key, baseUrl, model }) {
+    try {
+      let res, data;
+      if (provider === "anthropic") {
+        res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true",
+          },
+          body: JSON.stringify({ model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }),
+        });
+        data = await res.json();
+        if (!res.ok) return { ok: false, message: data?.error?.message || `HTTP ${res.status}` };
+        return { ok: true };
+      }
+      const base = normalizeBaseUrl(baseUrl);
+      res = await fetch(`${base}/chat/completions`, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+        body: JSON.stringify({ model, max_tokens: 8, messages: [{ role: "user", content: "Hi" }] }),
+      });
+      data = await res.json();
+      if (!res.ok) return { ok: false, message: data?.error?.message || `HTTP ${res.status}` };
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, message: `${err.message}（可能是这个服务商不支持网页直接调用 / CORS）` };
+    }
+  }
+
   function renderKeyPrompt() {
     container.querySelector("#chatArea").hidden = true;
     const panel = container.querySelector("#chatKeyPanel");
@@ -223,6 +258,7 @@ const ChatView = (() => {
     getProvider, setProvider,
     getAnthropicKey, getAnthropicModel,
     getCompatKey, getCompatModel, getCompatBaseUrl,
+    testConnection,
     KEYS,
   };
 })();

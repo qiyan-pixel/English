@@ -173,7 +173,10 @@
 
         <div id="anthropicFields">
           <label class="field-label">Anthropic API Key</label>
-          <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+          <div class="input-with-toggle">
+            <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+            <button type="button" class="icon-btn toggle-visibility" data-target="apiKeyInput" aria-label="显示/隐藏密钥">👁</button>
+          </div>
           <label class="field-label">模型 Model</label>
           <select id="apiModelSelect">
             <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5（推荐，便宜快速）</option>
@@ -193,15 +196,20 @@
             注意 Moonshot/Kimi 有两个不同的产品：按量付费的开发者 API 和按月付费的 Kimi Code Plan，地址不一样，以你自己账号的实际产品为准。
           </p>
           <label class="field-label">API Key</label>
-          <input type="password" id="apiKeyCompatInput" placeholder="sk-...">
+          <div class="input-with-toggle">
+            <input type="password" id="apiKeyCompatInput" placeholder="sk-...">
+            <button type="button" class="icon-btn toggle-visibility" data-target="apiKeyCompatInput" aria-label="显示/隐藏密钥">👁</button>
+          </div>
           <label class="field-label">模型名称 Model name</label>
           <input type="text" id="apiModelCompatInput" placeholder="例如 deepseek-chat / moonshot-v1-8k / qwen-plus / gpt-4o-mini">
         </div>
 
         <div class="settings-row">
+          <button id="testConnBtn" class="btn ghost small">🔌 测试连接 Test</button>
           <button id="saveKeyBtn" class="btn primary small">保存</button>
           <button id="clearKeyBtn" class="btn danger-ghost small">删除密钥</button>
         </div>
+        <p class="hint" id="testConnResult"></p>
         <p class="hint" id="keyStatus"></p>
       </section>
     </div>
