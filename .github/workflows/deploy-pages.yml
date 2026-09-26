@@ -31,6 +31,10 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -r css js data audio _site/
+      - name: Cache-bust CSS/JS so browsers pick up new deploys
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          sed -i "s/\.css\"/.css?v=$SHA\"/g; s/\.js\"/.js?v=$SHA\"/g" _site/index.html
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
