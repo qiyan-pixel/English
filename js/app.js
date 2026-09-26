@@ -222,6 +222,12 @@
 
     $("#apiProviderSelect").value = ChatView.getProvider();
     updateProviderFieldsVisibility();
+    $("#testConnResult").textContent = "";
+    $all(".toggle-visibility").forEach((btn) => {
+      $("#" + btn.dataset.target).type = "password";
+      btn.textContent = "👁";
+      btn.classList.remove("revealed");
+    });
     $("#apiModelSelect").value = ChatView.getAnthropicModel();
     $("#apiKeyInput").value = "";
     $("#apiBaseUrlInput").value = ChatView.getCompatBaseUrl();
@@ -256,6 +262,7 @@
       ChatView.setProvider(e.target.value);
       updateProviderFieldsVisibility();
       updateKeyStatus();
+      $("#testConnResult").textContent = "";
     });
     $("#apiModelSelect").addEventListener("change", (e) => localStorage.setItem(ChatView.KEYS.anthropicModel, e.target.value));
 
@@ -289,6 +296,39 @@
       updateKeyStatus();
       toast("已删除密钥");
       if (currentView === "chat") ChatView.render();
+    });
+
+    $all(".toggle-visibility").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const input = $("#" + btn.dataset.target);
+        const revealed = input.type === "text";
+        input.type = revealed ? "password" : "text";
+        btn.textContent = revealed ? "👁" : "🙈";
+        btn.classList.toggle("revealed", !revealed);
+      });
+    });
+
+    $("#testConnBtn").addEventListener("click", async () => {
+      const provider = $("#apiProviderSelect").value;
+      const result = $("#testConnResult");
+      const btn = $("#testConnBtn");
+      const params = provider === "anthropic"
+        ? { provider, key: $("#apiKeyInput").value.trim() || ChatView.getAnthropicKey(), model: $("#apiModelSelect").value }
+        : {
+            provider,
+            key: $("#apiKeyCompatInput").value.trim() || ChatView.getCompatKey(),
+            baseUrl: $("#apiBaseUrlInput").value.trim(),
+            model: $("#apiModelCompatInput").value.trim(),
+          };
+      if (!params.key || (provider !== "anthropic" && (!params.baseUrl || !params.model))) {
+        result.textContent = "⚠️ 请先填写完整的接口地址 / API Key / 模型名称。";
+        return;
+      }
+      btn.disabled = true;
+      result.textContent = "🔄 正在测试连接…";
+      const res = await ChatView.testConnection(params);
+      result.textContent = res.ok ? "✅ 连接成功！这组设置可以正常使用。" : `❌ 连接失败：${res.message}`;
+      btn.disabled = false;
     });
   }
 
