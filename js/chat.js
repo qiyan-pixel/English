@@ -62,17 +62,8 @@ const ChatView = (() => {
     try { return JSON.parse(text); } catch { return null; }
   }
 
-  // Single low-level request path for every provider call. Inside the
-  // Electron desktop app (window.electronAI present, see electron/preload.js)
-  // this routes through the main process's own networking, which is not a
-  // browser context and so is never subject to CORS -- that's what lets a
-  // provider that blocks direct browser calls still work from the app. In a
-  // regular browser it's a plain fetch(), same as before.
+  // Single low-level request path for every provider call.
   async function doFetch(url, headers, body) {
-    if (window.electronAI) {
-      const r = await window.electronAI.call(url, headers, body);
-      return { ok: r.ok, status: r.status, json: safeParseJson(r.text), rawText: r.text };
-    }
     const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
     const text = await res.text();
     return { ok: res.ok, status: res.status, json: safeParseJson(text), rawText: text };
@@ -128,7 +119,7 @@ const ChatView = (() => {
       if (!r.ok) return { ok: false, message: r.json?.error?.message || r.rawText?.slice(0, 200) || `HTTP ${r.status}` };
       return { ok: true };
     } catch (err) {
-      return { ok: false, message: `${err.message}（可能是这个服务商不支持网页直接调用 / CORS —— 可以用桌面版 App 或代理绕过）` };
+      return { ok: false, message: `${err.message}（可能是这个服务商不支持网页直接调用 / CORS —— 换成 Anthropic 最简单可靠）` };
     }
   }
 
@@ -216,8 +207,7 @@ const ChatView = (() => {
     const { lessons } = AppData.get();
     const providerLabel = getProvider() === "anthropic" ? "Anthropic" : "OpenAI 兼容接口";
     const scopeLabel = lessonFilter === "all" ? "全部 6 课" : `截止到第 ${lessonFilter} 课（${lessons.find((l) => l.id === lessonFilter)?.title || ""}）`;
-    const appBadge = window.electronAI ? " · 🖥️ 桌面版 App（不受网页 CORS 限制）" : "";
-    container.querySelector("#chatTopicLabel").textContent = `服务商：${providerLabel} · 词汇范围：${scopeLabel}${appBadge}`;
+    container.querySelector("#chatTopicLabel").textContent = `服务商：${providerLabel} · 词汇范围：${scopeLabel}`;
     if (!container.dataset.wired) {
       container.dataset.wired = "1";
       container.querySelector("#chatForm").addEventListener("submit", (e) => {

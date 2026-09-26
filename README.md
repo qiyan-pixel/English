@@ -44,10 +44,7 @@ python3 -m http.server 8000
 - **Anthropic Claude**（推荐，官方支持网页直接调用）
 - **OpenAI 兼容接口**：填接口地址 + API Key + 模型名称，可以接 OpenAI 本身，也可以接 DeepSeek、Moonshot/Kimi、通义千问、智谱GLM 等国内服务商的"兼容模式"接口——只要它是 OpenAI 格式的 `/chat/completions` 接口就能用。设置里填的地址页面上有各家常见地址；在服务商自己的文档里要选 **OpenAI 兼容 / OpenAI Compatible** 那一项，不是 Anthropic 兼容（有的服务商比如 Kimi 两种都提供，但本站目前只接了 OpenAI 格式）。注意 Moonshot/Kimi 按量付费的开发者 API 和按月付费的 Kimi Code Plan 是两个不同产品，地址也不同，以你自己账号实际用的产品为准。
 
-不是所有服务商都允许网页直接调用（CORS）——测试连接如果提示 "Load failed" / "Failed to fetch"，多半是这个原因，不是配置错了。想确认可以打开浏览器开发者工具的 Network 面板重新测试一次，看失败请求是不是连响应状态码都没有（典型 CORS 特征）。这种情况下换一个支持网页直连的服务商（Anthropic）最简单；如果就是想用这个不支持 CORS 的服务商，有两个办法：
-
-- 照着 [`cloudflare-worker/`](./cloudflare-worker/) 里的步骤搭一个免费的小型反向代理，把真实 API Key 放在代理服务器那一侧，网站这边填代理地址即可，依然是纯静态网站，不需要装任何软件。
-- 如果服务商连服务器到服务器的代理请求也拒绝（比如按 IP 或客户端身份限制），用 [`electron/`](./electron/) 打包一个 Mac 桌面版：AI 请求从桌面 App 的进程直接发出，完全不经过浏览器，天然不受 CORS 限制。
+不是所有服务商都允许网页直接调用（CORS）——测试连接如果提示 "Load failed" / "Failed to fetch"，多半是这个原因，不是配置错了。想确认可以打开浏览器开发者工具的 Network 面板重新测试一次，看失败请求是不是连响应状态码都没有（典型 CORS 特征）。遇到这种情况换一个支持网页直连的服务商（推荐 Anthropic，官方原生支持）最简单可靠。
 
 AI 会在系统提示里拿到完整的课件词表，并被要求尽量只用这些词——但这是"尽量"，不是 100% 保证。如果想要保证绝不超纲的练习，用"对话 & 问答"页面（纯课件内容，没有 AI）。
 
