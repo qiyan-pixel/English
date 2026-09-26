@@ -1,0 +1,50 @@
+[
+  {
+    "id":1,
+    "title":"Lesson 1 · am / is / are",
+    "title_zh":"第一课 · be动词 am / is / are",
+    "grammar":"I am, you/we/they are, he/she/it is — statements, questions (Am I...? Are you...? Is he...?) and negatives (I'm not, you aren't...). Question word: where.",
+    "grammar_zh":"be动词的用法：I am，you/we/they are，he/she/it is；肯定句、疑问句（Am I...? Are you...? Is he...?）和否定句（I'm not, you aren't...）；疑问词 where。",
+    "source":"Part 1 (am, is, are).docx"
+  },
+  {
+    "id":2,
+    "title":"Lesson 2 · do",
+    "title_zh":"第二课 · 一般现在时 do",
+    "grammar":"Present simple with do/does for habits and daily routine: Do you...? I don't..., What time do you...?",
+    "grammar_zh":"一般现在时 do/does，用来表达习惯和日常生活：Do you...? I don't..., What time do you...?",
+    "source":"Part 2 (do).docx"
+  },
+  {
+    "id":3,
+    "title":"Lesson 3 · can / does",
+    "title_zh":"第三课 · 情态动词 can 与一般现在时 does",
+    "grammar":"can/can't for ability and permission (Can you...? You can't...), plus more present simple with does/doesn't for he/she/it.",
+    "grammar_zh":"情态动词 can/can't 表示能力和许可（Can you...? You can't...），以及第三人称单数一般现在时 does/doesn't。",
+    "source":"Part 3 (can, does).docx"
+  },
+  {
+    "id":4,
+    "title":"Lesson 4 · do / was",
+    "title_zh":"第四课 · like/love/hate + 动名词，was/were",
+    "grammar":"like/love/hate/prefer/enjoy + verb-ing, and an introduction to was/were (past of am/is/are).",
+    "grammar_zh":"like/love/hate/prefer/enjoy 加动名词(-ing)的用法，以及 was/were（am/is/are 的过去式）的入门。",
+    "source":"Part 4 (do, was).docx"
+  },
+  {
+    "id":5,
+    "title":"Lesson 5 · did",
+    "title_zh":"第五课 · 一般过去时 did",
+    "grammar":"Past simple: regular verbs (-ed), irregular verbs (go/went, have/had, get/got, eat/ate...), questions with Did...? and negatives with didn't.",
+    "grammar_zh":"一般过去时：规则动词加 -ed，不规则动词（go/went, have/had, get/got, eat/ate 等），疑问句 Did...? 和否定句 didn't。",
+    "source":"Part 5 (did).docx"
+  },
+  {
+    "id":6,
+    "title":"Lesson 6 · there's / did / was",
+    "title_zh":"第六课 · there is/are 及过去时综合",
+    "grammar":"There is / there are (and their past forms there was / there were) for saying what exists, combined with past simple review.",
+    "grammar_zh":"There is / there are（以及过去式 there was / there were）表示某处存在某物，并综合复习一般过去时。",
+    "source":"Part 6 (theres, did, was).docx"
+  }
+]
