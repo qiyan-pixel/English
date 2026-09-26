@@ -81,9 +81,10 @@ export default {
     }
 
     const responseBody = await upstreamRes.text();
+    const upstreamContentType = upstreamRes.headers.get("content-type") || "application/json";
     return new Response(responseBody, {
       status: upstreamRes.status,
-      headers: { ...headers, "content-type": "application/json" },
+      headers: { ...headers, "content-type": upstreamContentType },
     });
   },
 };

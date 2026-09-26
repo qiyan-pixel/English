@@ -1,0 +1,107 @@
+/* Desktop app skin: glassmorphism + a slow animated tech-gradient backdrop.
+   Injected only inside the Electron app (see main.js) -- the website itself
+   is untouched and keeps its plain, reading-focused look. Redefines the
+   same CSS custom properties style.css already uses, so every component
+   (cards, buttons, modals, bars...) picks this up automatically. */
+
+:root {
+  --bg: transparent;
+  --bg-elevated: rgba(255, 255, 255, 0.55);
+  --text: #14213d;
+  --text-dim: #4a5578;
+  --border: rgba(255, 255, 255, 0.45);
+  --primary: #6f5cff;
+  --primary-dim: rgba(111, 92, 255, 0.16);
+  --primary-text: #ffffff;
+  --accent: #00d9c6;
+  --accent-dim: rgba(0, 217, 198, 0.16);
+  --danger: #ff5470;
+  --danger-dim: rgba(255, 84, 112, 0.14);
+  --success: #00c896;
+  --shadow: 0 8px 28px rgba(31, 20, 90, 0.14);
+  --shadow-lg: 0 24px 64px rgba(31, 20, 90, 0.28);
+  --radius: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: transparent;
+    --bg-elevated: rgba(28, 26, 48, 0.55);
+    --text: #eef0ff;
+    --text-dim: #a9adcf;
+    --border: rgba(255, 255, 255, 0.14);
+    --primary: #8f7bff;
+    --primary-dim: rgba(143, 123, 255, 0.22);
+    --primary-text: #ffffff;
+    --accent: #35f2dd;
+    --accent-dim: rgba(53, 242, 221, 0.18);
+    --danger: #ff6b86;
+    --danger-dim: rgba(255, 107, 134, 0.18);
+    --success: #35f2b0;
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Ambient animated tech backdrop, sitting behind the native window vibrancy */
+body {
+  background: transparent;
+  position: relative;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: -10vmax;
+  z-index: -1;
+  background:
+    radial-gradient(38vmax 38vmax at 12% 18%, rgba(111, 92, 255, 0.35), transparent 60%),
+    radial-gradient(42vmax 42vmax at 88% 24%, rgba(0, 217, 198, 0.28), transparent 60%),
+    radial-gradient(46vmax 46vmax at 50% 92%, rgba(255, 84, 170, 0.22), transparent 60%);
+  filter: blur(10px) saturate(140%);
+  animation: engcourseDrift 26s ease-in-out infinite alternate;
+}
+@keyframes engcourseDrift {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate3d(2vmax, -2vmax, 0) rotate(6deg) scale(1.08); }
+  100% { transform: translate3d(-2vmax, 1vmax, 0) rotate(-4deg) scale(1.04); }
+}
+
+/* Frosted glass surfaces */
+.topbar,
+.side-nav,
+.stat-pill,
+.lesson-card,
+.flashcard,
+.exercise-card,
+.dialogue-card,
+.question-card,
+.chat-area,
+.modal,
+.progress-lesson-row,
+.chat-msg.assistant {
+  background: var(--bg-elevated) !important;
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--border) !important;
+}
+.topbar { border-bottom: 1px solid var(--border) !important; border-left: none !important; border-right: none !important; border-top: none !important; }
+.side-nav { border-right: 1px solid var(--border) !important; border-top: none !important; border-bottom: none !important; border-left: none !important; }
+
+/* Tech-glow accents */
+.btn.primary,
+.quick-link,
+.nav-item.active,
+.lesson-chip.active,
+.mode-tab.active {
+  box-shadow: 0 0 0 1px rgba(111, 92, 255, 0.4), 0 6px 20px rgba(111, 92, 255, 0.35);
+}
+.streak-badge {
+  box-shadow: 0 0 0 1px rgba(0, 217, 198, 0.35), 0 4px 14px rgba(0, 217, 198, 0.3);
+}
+.audio-btn {
+  box-shadow: 0 0 0 1px rgba(0, 217, 198, 0.25);
+}
+
+/* Window drag region for the hidden-inset titlebar */
+.topbar { -webkit-app-region: drag; }
+.topbar button, .topbar select, .topbar input { -webkit-app-region: no-drag; }
