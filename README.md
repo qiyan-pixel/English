@@ -42,7 +42,7 @@ python3 -m http.server 8000
 "AI 自由对话"页面需要你自己的 API Key（在设置里填写，只保存在你自己浏览器的 localStorage，不会上传到任何服务器或代码仓库）。支持两种服务商：
 
 - **Anthropic Claude**（推荐，官方支持网页直接调用）
-- **OpenAI 兼容接口**：填接口地址 + API Key + 模型名称，可以接 OpenAI 本身，也可以接 DeepSeek、Kimi/Moonshot、通义千问、智谱GLM 等国内服务商的"兼容模式"接口——只要它是 OpenAI 格式的 `/chat/completions` 接口就能用。注意：不是所有服务商都允许网页直接调用（CORS），如果一直报网络错误，换一个服务商试试。
+- **OpenAI 兼容接口**：填接口地址 + API Key + 模型名称，可以接 OpenAI 本身，也可以接 DeepSeek、Moonshot/Kimi、通义千问、智谱GLM 等国内服务商的"兼容模式"接口——只要它是 OpenAI 格式的 `/chat/completions` 接口就能用。设置里填的地址页面上有各家常见地址；在服务商自己的文档里要选 **OpenAI 兼容 / OpenAI Compatible** 那一项，不是 Anthropic 兼容（有的服务商比如 Kimi 两种都提供，但本站目前只接了 OpenAI 格式）。注意 Moonshot/Kimi 按量付费的开发者 API 和按月付费的 Kimi Code Plan 是两个不同产品，地址也不同，以你自己账号实际用的产品为准。注意：不是所有服务商都允许网页直接调用（CORS），如果一直报网络错误，换一个服务商试试。
 
 AI 会在系统提示里拿到完整的课件词表，并被要求尽量只用这些词——但这是"尽量"，不是 100% 保证。如果想要保证绝不超纲的练习，用"对话 & 问答"页面（纯课件内容，没有 AI）。
 
