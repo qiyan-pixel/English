@@ -193,7 +193,8 @@
             Moonshot 开发者API <code>api.moonshot.cn/v1</code> · Kimi Code Plan <code>api.kimi.com/coding/v1</code> ·
             通义千问 <code>dashscope.aliyuncs.com/compatible-mode/v1</code> ·
             智谱GLM <code>open.bigmodel.cn/api/paas/v4</code><br>
-            注意 Moonshot/Kimi 有两个不同的产品：按量付费的开发者 API 和按月付费的 Kimi Code Plan，地址不一样，以你自己账号的实际产品为准。
+            注意 Moonshot/Kimi 有两个不同的产品：按量付费的开发者 API 和按月付费的 Kimi Code Plan，地址不一样，以你自己账号的实际产品为准。<br>
+            如果测试连接提示 "Load failed" / "Failed to fetch"，通常是这家服务商不支持网页直接调用，换 Anthropic 最简单；坚持要用这家的话，仓库里 <code>cloudflare-worker/</code> 有免费代理方案的搭建步骤。
           </p>
           <label class="field-label">API Key</label>
           <div class="input-with-toggle">
