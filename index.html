@@ -185,9 +185,12 @@
           <label class="field-label">接口地址 Base URL</label>
           <input type="text" id="apiBaseUrlInput" placeholder="https://api.deepseek.com/v1">
           <p class="hint" style="margin:-4px 0 10px">
-            常见地址：OpenAI <code>api.openai.com/v1</code> · DeepSeek <code>api.deepseek.com/v1</code> ·
-            Kimi/Moonshot <code>api.moonshot.cn/v1</code> · 通义千问 <code>dashscope.aliyuncs.com/compatible-mode/v1</code> ·
-            智谱GLM <code>open.bigmodel.cn/api/paas/v4</code>（填到 /v1 或对应版本号为止，不要加 /chat/completions）
+            常见地址（填到 /v1 或对应版本号为止，不要加 /chat/completions；服务商文档里要选 <b>OpenAI 兼容 / OpenAI Compatible</b> 那一项，不是 Anthropic 兼容）：<br>
+            OpenAI <code>api.openai.com/v1</code> · DeepSeek <code>api.deepseek.com/v1</code> ·
+            Moonshot 开发者API <code>api.moonshot.cn/v1</code> · Kimi Code Plan <code>api.kimi.com/coding/v1</code> ·
+            通义千问 <code>dashscope.aliyuncs.com/compatible-mode/v1</code> ·
+            智谱GLM <code>open.bigmodel.cn/api/paas/v4</code><br>
+            注意 Moonshot/Kimi 有两个不同的产品：按量付费的开发者 API 和按月付费的 Kimi Code Plan，地址不一样，以你自己账号的实际产品为准。
           </p>
           <label class="field-label">API Key</label>
           <input type="password" id="apiKeyCompatInput" placeholder="sk-...">
