@@ -1,0 +1,160 @@
+[
+  {
+    "id":"d1-greeting",
+    "lesson":1,
+    "title":"Nice to meet you",
+    "title_zh":"很高兴认识你",
+    "lines":[
+      {"speaker":"Sam","en":"Hello, Mike!"},
+      {"speaker":"Mike","en":"Hi, Sam! How are you?"},
+      {"speaker":"Sam","en":"Fine, thanks. And you?"},
+      {"speaker":"Mike","en":"I'm okay, thanks. This is Helen. She's a friend from work."},
+      {"speaker":"Helen","en":"Nice to meet you!"},
+      {"speaker":"Sam","en":"Hi! Nice to meet you, too!"},
+      {"speaker":"Mike","en":"Sorry, we're in a hurry. See you soon. Bye!"},
+      {"speaker":"Sam","en":"Bye!"}
+    ]
+  },
+  {
+    "id":"d2-hairdresser",
+    "lesson":2,
+    "title":"At the hairdresser",
+    "title_zh":"在理发店",
+    "lines":[
+      {"speaker":"Hairdresser","en":"Hello! Is this your first time here?"},
+      {"speaker":"Customer","en":"Yes, it is. Do you live near here?"},
+      {"speaker":"Hairdresser","en":"No, I live in the center. Oh, nice. How do you want your hair?"},
+      {"speaker":"Customer","en":"I don't know. Something different."},
+      {"speaker":"Hairdresser","en":"Do you want a coffee?"},
+      {"speaker":"Customer","en":"No, thanks! I don't drink coffee."},
+      {"speaker":"Hairdresser","en":"Do you want a magazine?"},
+      {"speaker":"Customer","en":"Yes, please. Do you have children?"},
+      {"speaker":"Hairdresser","en":"Yes, I do. I have two boys."},
+      {"speaker":"Customer","en":"How old are they?"},
+      {"speaker":"Hairdresser","en":"Eight and ten. ... It's very short."},
+      {"speaker":"Customer","en":"Don't worry. Wait. Do you like it?"}
+    ]
+  },
+  {
+    "id":"d3-parking",
+    "lesson":3,
+    "title":"You can't park there",
+    "title_zh":"你不能在那里停车",
+    "lines":[
+      {"speaker":"Policeman","en":"Excuse me. You can't park there."},
+      {"speaker":"Woman","en":"No? Why not?"},
+      {"speaker":"Policeman","en":"You're on a double yellow line!"},
+      {"speaker":"Woman","en":"Oh, I'm sorry, officer. Where can I park near here?"},
+      {"speaker":"Policeman","en":"You can park over there, madam, in the car park."},
+      {"speaker":"Woman","en":"Thank you, officer."}
+    ]
+  },
+  {
+    "id":"d3-phonecall",
+    "lesson":3,
+    "title":"Can you come to dinner?",
+    "title_zh":"你能来吃晚饭吗",
+    "lines":[
+      {"speaker":"Matt","en":"Hi, Ellie! Who's that?"},
+      {"speaker":"Ellie","en":"It's me, Ellie! How are you?"},
+      {"speaker":"Matt","en":"Oh, fine, thanks!"},
+      {"speaker":"Ellie","en":"Can you come to dinner on Friday?"},
+      {"speaker":"Matt","en":"On Friday? Oh, I'm really sorry. I can't come. It's my girlfriend's birthday."},
+      {"speaker":"Ellie","en":"Your girlfriend?!"},
+      {"speaker":"Matt","en":"Yes, Lucy, from work."},
+      {"speaker":"Ellie","en":"Oh, Lucy. Sorry about the dinner."},
+      {"speaker":"Matt","en":"That's OK. Bye!"}
+    ]
+  },
+  {
+    "id":"d4-likes",
+    "lesson":4,
+    "title":"Do you like shopping?",
+    "title_zh":"你喜欢购物吗",
+    "lines":[
+      {"speaker":"A","en":"Do you like shopping?"},
+      {"speaker":"B","en":"No, I don't. I hate it. I prefer cooking."},
+      {"speaker":"A","en":"Really? I love shopping! I enjoy buying clothes and music."},
+      {"speaker":"B","en":"I don't like clothes shopping. But I like buying food."},
+      {"speaker":"A","en":"What do you like doing at the weekend, then?"},
+      {"speaker":"B","en":"I like cooking, reading, and playing chess with my friends."}
+    ]
+  },
+  {
+    "id":"d5-phonecall",
+    "lesson":5,
+    "title":"How was Paris? (a phone call)",
+    "title_zh":"巴黎怎么样（电话对话）",
+    "lines":[
+      {"speaker":"Ben","en":"Hi, darling."},
+      {"speaker":"Linda","en":"Oh hi, Dad. How's Paris?"},
+      {"speaker":"Ben","en":"Fine. A lot of work. Did you have a good day?"},
+      {"speaker":"Linda","en":"It was OK."},
+      {"speaker":"Ben","en":"What did you do?"},
+      {"speaker":"Linda","en":"I got up early. I went to school."},
+      {"speaker":"Ben","en":"How was it?"},
+      {"speaker":"Linda","en":"Great! We didn't have classes. We went to the museum."},
+      {"speaker":"Ben","en":"Oh nice. Did you have lunch there?"},
+      {"speaker":"Linda","en":"Yes, we had lunch at the cafe. And then I went shopping."},
+      {"speaker":"Ben","en":"Did you do your homework?"},
+      {"speaker":"Linda","en":"Yes, of course. I always do my homework."}
+    ]
+  },
+  {
+    "id":"d5-murder",
+    "lesson":5,
+    "title":"The inspector questions Barbara",
+    "title_zh":"探长询问芭芭拉",
+    "lines":[
+      {"speaker":"Inspector","en":"What did you do after dinner yesterday evening?"},
+      {"speaker":"Barbara","en":"After dinner I played cards with Gordon, and then I went to bed."},
+      {"speaker":"Inspector","en":"What time was that?"},
+      {"speaker":"Barbara","en":"It was about half past eleven. I remember I looked at my watch."},
+      {"speaker":"Inspector","en":"Did you hear anything in your father's room?"},
+      {"speaker":"Barbara","en":"No, I didn't hear anything."},
+      {"speaker":"Inspector","en":"Did you have any problems with your father?"},
+      {"speaker":"Barbara","en":"No, no problems at all. My father was a wonderful man."},
+      {"speaker":"Inspector","en":"Thank you, Ms Travers."}
+    ]
+  },
+  {
+    "id":"d6-hotel",
+    "lesson":6,
+    "title":"Checking into a small hotel",
+    "title_zh":"入住小旅馆",
+    "lines":[
+      {"speaker":"Guest","en":"Hello! We have a reservation."},
+      {"speaker":"Receptionist","en":"Let's see. Yes. Welcome to the island. Your room's upstairs, number seven."},
+      {"speaker":"Guest","en":"Is there a lift?"},
+      {"speaker":"Receptionist","en":"No, I'm sorry. There isn't. But I can help you with your bags. This is your room."},
+      {"speaker":"Guest","en":"It's very small."},
+      {"speaker":"Receptionist","en":"Yes, but there's a beautiful view."},
+      {"speaker":"Guest","en":"There are two beds. We wanted a double bed."},
+      {"speaker":"Receptionist","en":"This is the bathroom."},
+      {"speaker":"Guest","en":"There isn't a bath!"},
+      {"speaker":"Receptionist","en":"No, there's a shower. It uses less water."},
+      {"speaker":"Guest","en":"Are there any shops near here?"},
+      {"speaker":"Receptionist","en":"No. There aren't."}
+    ]
+  },
+  {
+    "id":"d6-train",
+    "lesson":6,
+    "title":"Strangers on a train",
+    "title_zh":"火车上的陌生人",
+    "lines":[
+      {"speaker":"Woman","en":"Excuse me, can I sit here?"},
+      {"speaker":"Man","en":"Sure."},
+      {"speaker":"Woman","en":"I loved that book."},
+      {"speaker":"Man","en":"Sorry?"},
+      {"speaker":"Woman","en":"I said I loved that book."},
+      {"speaker":"Woman","en":"Coffee?"},
+      {"speaker":"Man","en":"Okay."},
+      {"speaker":"Woman","en":"What do you do?"},
+      {"speaker":"Man","en":"I work for a bank. What do you do?"},
+      {"speaker":"Woman","en":"I work in property. Flats and houses."},
+      {"speaker":"Man","en":"That's interesting! Do you live in London?"},
+      {"speaker":"Woman","en":"Yes. I have a flat near the river."}
+    ]
+  }
+]

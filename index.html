@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的英语课 · My English Course</title>
+<meta name="description" content="基于6份课件制作的英语学习网站：单词、句子读听默、英汉互译、对话与扩展问答。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button id="navToggle" class="icon-btn nav-toggle" aria-label="菜单" aria-expanded="false">☰</button>
+    <div class="brand">
+      <span class="brand-emoji">📘</span>
+      <span class="brand-text">我的英语课 <small>My English Course</small></span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="streak-badge" id="streakBadge" title="连续学习天数">🔥 0</div>
+    <button id="settingsBtn" class="icon-btn" aria-label="设置">⚙️</button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <nav id="sideNav" class="side-nav">
+    <div class="lesson-picker">
+      <div class="lesson-picker-label">课件 Lesson</div>
+      <div id="lessonChips" class="lesson-chips"></div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li><button class="nav-item active" data-view="home">🏠 首页 Home</button></li>
+      <li><button class="nav-item" data-view="vocab">🔤 单词 Vocabulary</button></li>
+      <li><button class="nav-item" data-view="sentences">🗣️ 句子 Sentences</button></li>
+      <li><button class="nav-item" data-view="translate">🔁 英汉互译 Translate</button></li>
+      <li><button class="nav-item" data-view="dialogue">💬 对话 &amp; 问答</button></li>
+      <li><button class="nav-item" data-view="chat">🤖 AI 自由对话</button></li>
+      <li><button class="nav-item" data-view="progress">📊 学习进度 Progress</button></li>
+    </ul>
+  </nav>
+  <div class="nav-scrim" id="navScrim"></div>
+
+  <main id="main" class="main">
+
+    <!-- HOME -->
+    <section id="view-home" class="view active">
+      <h1>你好！开始今天的英语学习吧 👋</h1>
+      <p class="subtitle">内容全部来自你的 6 份课件，单词已去重整理，从这里选一个练习开始。</p>
+      <div id="homeStats" class="stat-row"></div>
+      <h2 class="section-title">课件 Lessons</h2>
+      <div id="lessonCards" class="lesson-cards"></div>
+      <h2 class="section-title">快速开始</h2>
+      <div class="quick-links">
+        <button class="quick-link" data-view="vocab">🔤 复习单词</button>
+        <button class="quick-link" data-view="sentences">🗣️ 句子听写</button>
+        <button class="quick-link" data-view="translate">🔁 翻译练习</button>
+        <button class="quick-link" data-view="dialogue">💬 对话练习</button>
+      </div>
+    </section>
+
+    <!-- VOCAB -->
+    <section id="view-vocab" class="view">
+      <h1>单词练习 Vocabulary</h1>
+      <p class="subtitle" id="vocabScopeNote"></p>
+      <div class="mode-tabs" id="vocabModeTabs">
+        <button class="mode-tab active" data-mode="flashcard">🃏 卡片认读</button>
+        <button class="mode-tab" data-mode="dictation">✍️ 听写拼写</button>
+        <button class="mode-tab" data-mode="translate">🔁 中英互译</button>
+      </div>
+      <div id="vocabArea" class="practice-area"></div>
+    </section>
+
+    <!-- SENTENCES -->
+    <section id="view-sentences" class="view">
+      <h1>句子练习 Sentences · 读 / 听 / 默</h1>
+      <p class="subtitle">跟读课件里的例句，或盲听默写下来。</p>
+      <div class="mode-tabs" id="sentModeTabs">
+        <button class="mode-tab active" data-mode="read">📖 跟读</button>
+        <button class="mode-tab" data-mode="dictation">✍️ 听写</button>
+      </div>
+      <div id="sentArea" class="practice-area"></div>
+    </section>
+
+    <!-- TRANSLATE -->
+    <section id="view-translate" class="view">
+      <h1>英汉互译 Translate</h1>
+      <p class="subtitle">看中文写英文，或看英文说中文意思。</p>
+      <div class="mode-tabs" id="transModeTabs">
+        <button class="mode-tab active" data-mode="zh2en">中 → 英</button>
+        <button class="mode-tab" data-mode="en2zh">英 → 中</button>
+      </div>
+      <div id="transArea" class="practice-area"></div>
+    </section>
+
+    <!-- DIALOGUE -->
+    <section id="view-dialogue" class="view">
+      <h1>对话与扩展问答</h1>
+      <p class="subtitle">课件里的真实对话，加上可以用来扩展练习口语的问题。</p>
+      <div class="mode-tabs" id="dlgModeTabs">
+        <button class="mode-tab active" data-mode="dialogue">💬 对话</button>
+        <button class="mode-tab" data-mode="questions">❓ 扩展问答</button>
+      </div>
+      <div id="dlgArea" class="practice-area"></div>
+    </section>
+
+    <!-- AI CHAT -->
+    <section id="view-chat" class="view">
+      <h1>AI 自由对话 <span class="beta-tag">Beta</span></h1>
+      <p class="subtitle">
+        用你自己的 Anthropic (Claude) API Key 和 AI 自由聊天练习英语。
+        AI 会尽量只用这 6 份课件学过的单词和语法，但这是"尽量"，不是 100% 保证 —
+        如果只想用课件内保证不超纲的内容，请用"对话与扩展问答"页面。
+      </p>
+      <div id="chatKeyPanel" class="chat-key-panel"></div>
+      <div id="chatArea" class="chat-area" hidden>
+        <div id="chatLog" class="chat-log"></div>
+        <form id="chatForm" class="chat-form">
+          <input id="chatInput" type="text" placeholder="Type in English..." autocomplete="off">
+          <button type="submit" class="btn primary">发送 Send</button>
+        </form>
+        <div class="chat-toolbar">
+          <span id="chatTopicLabel"></span>
+          <button id="chatClearBtn" class="btn ghost small">🗑️ 清空对话</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="view-progress" class="view">
+      <h1>学习进度 Progress</h1>
+      <div id="progressSummary" class="stat-row"></div>
+      <h2 class="section-title">分课件掌握情况</h2>
+      <div id="progressByLesson" class="progress-lessons"></div>
+      <h2 class="section-title">数据管理</h2>
+      <div class="settings-row">
+        <button id="exportProgressBtn" class="btn ghost">⬇️ 导出学习记录</button>
+        <label class="btn ghost file-btn">⬆️ 导入学习记录
+          <input type="file" id="importProgressInput" accept="application/json" hidden>
+        </label>
+        <button id="resetProgressBtn" class="btn danger-ghost">♻️ 重置全部进度</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Settings modal -->
+<div id="settingsModal" class="modal-backdrop" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <h2>设置 Settings</h2>
+      <button id="settingsCloseBtn" class="icon-btn" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <section class="settings-section">
+        <h3>🔊 发音 Audio</h3>
+        <p class="hint">优先播放录制好的音频文件；如果没有对应文件，自动使用浏览器朗读。</p>
+        <label class="field-label">浏览器朗读音色 Voice</label>
+        <select id="voiceSelect"></select>
+        <label class="field-label">朗读速度 Speed: <span id="rateValue">1.0x</span></label>
+        <input type="range" id="rateRange" min="0.5" max="1.3" step="0.1" value="1">
+        <button id="testVoiceBtn" class="btn ghost small">🔊 试听 Test</button>
+      </section>
+      <section class="settings-section">
+        <h3>🤖 AI 对话 API Key</h3>
+        <p class="hint">密钥只保存在你这台设备的浏览器里（localStorage），不会上传到任何服务器或代码仓库。</p>
+        <label class="field-label">Anthropic API Key</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+        <label class="field-label">模型 Model</label>
+        <select id="apiModelSelect">
+          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5（推荐，便宜快速）</option>
+          <option value="claude-sonnet-5">Claude Sonnet 5（更聪明，成本更高）</option>
+        </select>
+        <div class="settings-row">
+          <button id="saveKeyBtn" class="btn primary small">保存</button>
+          <button id="clearKeyBtn" class="btn danger-ghost small">删除密钥</button>
+        </div>
+        <p class="hint" id="keyStatus"></p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/vocab.js"></script>
+<script src="js/sentences.js"></script>
+<script src="js/translate.js"></script>
+<script src="js/dialogue.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
