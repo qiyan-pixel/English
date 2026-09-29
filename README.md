@@ -1,6 +1,6 @@
 # 我的英语课 · My English Course
 
-一个基于 6 份课件（`courseware/*.docx`）制作的英语自学网站：单词卡片、听写拼写、句子读听默、英汉互译、课件对话与扩展问答，外加一个可选的 AI 自由对话模式。纯静态网站（HTML/CSS/JS），不需要后端、不需要构建工具，可以直接部署到 GitHub Pages。
+一个基于 6 份课件（`courseware/*.docx`）制作的英语自学网站：单词卡片、听写拼写、句子读听默、英汉互译、课件对话与扩展问答。纯静态网站（HTML/CSS/JS），不需要后端、不需要构建工具，可以直接部署到 GitHub Pages。
 
 ## 本地预览
 
@@ -36,15 +36,6 @@ python3 -m http.server 8000
 ## 发音 / 音频
 
 默认用浏览器自带的语音朗读（Web Speech API），免费、零配置。如果想要更自然的真人发音，把音频文件放进 `audio/words/` 或 `audio/sentences/`（命名规则见 `audio/README.md`），网站会自动优先播放这些文件，没有文件的词句照常用浏览器朗读兜底。
-
-## AI 自由对话（可选）
-
-"AI 自由对话"页面需要你自己的 API Key（在设置里填写，只保存在你自己浏览器的 localStorage，不会上传到任何服务器或代码仓库）。支持两种服务商：
-
-- **Anthropic Claude**（推荐，官方支持网页直接调用）
-- **OpenAI 兼容接口**：填接口地址 + API Key + 模型名称，可以接 OpenAI 本身，也可以接 DeepSeek、Moonshot/Kimi、通义千问、智谱GLM 等国内服务商的"兼容模式"接口——只要它是 OpenAI 格式的 `/chat/completions` 接口就能用。设置里填的地址页面上有各家常见地址；在服务商自己的文档里要选 **OpenAI 兼容 / OpenAI Compatible** 那一项，不是 Anthropic 兼容（有的服务商比如 Kimi 两种都提供，但本站目前只接了 OpenAI 格式）。注意 Moonshot/Kimi 按量付费的开发者 API 和按月付费的 Kimi Code Plan 是两个不同产品，地址也不同，以你自己账号实际用的产品为准。注意：不是所有服务商都允许网页直接调用（CORS），如果一直报网络错误，换一个服务商试试。
-
-AI 会在系统提示里拿到完整的课件词表，并被要求尽量只用这些词——但这是"尽量"，不是 100% 保证。如果想要保证绝不超纲的练习，用"对话 & 问答"页面（纯课件内容，没有 AI）。
 
 ## 部署到 GitHub Pages
 

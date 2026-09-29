@@ -35,7 +35,6 @@
     else if (view === "sentences") SentencesView.init($("#sentArea"), lessonFilter);
     else if (view === "translate") TranslateView.init($("#transArea"), lessonFilter);
     else if (view === "dialogue") DialogueView.init($("#dlgArea"), lessonFilter);
-    else if (view === "chat") ChatView.init($("#view-chat"), lessonFilter);
     else if (view === "home") renderHome();
     else if (view === "progress") renderProgress();
   }
@@ -89,7 +88,6 @@
       else if (currentView === "sentences") SentencesView.setLesson(lessonFilter);
       else if (currentView === "translate") TranslateView.setLesson(lessonFilter);
       else if (currentView === "dialogue") DialogueView.setLesson(lessonFilter);
-      else if (currentView === "chat") ChatView.setLesson(lessonFilter);
       else if (currentView === "home") renderHome();
       else if (currentView === "progress") renderProgress();
     });
@@ -207,43 +205,17 @@
     if (current) sel.value = current;
   }
 
-  function updateProviderFieldsVisibility() {
-    const provider = $("#apiProviderSelect").value;
-    $("#anthropicFields").hidden = provider !== "anthropic";
-    $("#compatFields").hidden = provider !== "openai-compatible";
-  }
-
   function openSettingsModal() {
     $("#settingsModal").hidden = false;
     populateVoiceSelect();
     setTimeout(populateVoiceSelect, 300); // voices often load async on first visit
     $("#rateRange").value = TTS.getRate();
     $("#rateValue").textContent = TTS.getRate().toFixed(1) + "x";
-
-    $("#apiProviderSelect").value = ChatView.getProvider();
-    updateProviderFieldsVisibility();
-    $("#testConnResult").textContent = "";
-    $all(".toggle-visibility").forEach((btn) => {
-      $("#" + btn.dataset.target).type = "password";
-      btn.textContent = "👁";
-      btn.classList.remove("revealed");
-    });
-    $("#apiModelSelect").value = ChatView.getAnthropicModel();
-    $("#apiKeyInput").value = "";
-    $("#apiBaseUrlInput").value = ChatView.getCompatBaseUrl();
-    $("#apiModelCompatInput").value = ChatView.getCompatModel();
-    $("#apiKeyCompatInput").value = "";
-    updateKeyStatus();
   }
   window.openSettingsModal = openSettingsModal;
 
   function closeSettingsModal() {
     $("#settingsModal").hidden = true;
-  }
-
-  function updateKeyStatus() {
-    const has = ChatView.getProvider() === "anthropic" ? !!ChatView.getAnthropicKey() : !!ChatView.getCompatKey();
-    $("#keyStatus").textContent = has ? "✅ 当前服务商已保存 API Key。" : "当前服务商尚未设置 API Key，AI 对话功能不可用。";
   }
 
   function wireSettings() {
@@ -257,79 +229,6 @@
       $("#rateValue").textContent = parseFloat(e.target.value).toFixed(1) + "x";
     });
     $("#testVoiceBtn").addEventListener("click", () => TTS.speak("Hello! This is a test. Are you ready to study English?", {}));
-
-    $("#apiProviderSelect").addEventListener("change", (e) => {
-      ChatView.setProvider(e.target.value);
-      updateProviderFieldsVisibility();
-      updateKeyStatus();
-      $("#testConnResult").textContent = "";
-    });
-    $("#apiModelSelect").addEventListener("change", (e) => localStorage.setItem(ChatView.KEYS.anthropicModel, e.target.value));
-
-    $("#saveKeyBtn").addEventListener("click", () => {
-      const provider = $("#apiProviderSelect").value;
-      ChatView.setProvider(provider);
-      if (provider === "anthropic") {
-        const val = $("#apiKeyInput").value.trim();
-        if (!val) { toast("请先输入 API Key"); return; }
-        localStorage.setItem(ChatView.KEYS.anthropicKey, val);
-        localStorage.setItem(ChatView.KEYS.anthropicModel, $("#apiModelSelect").value);
-        $("#apiKeyInput").value = "";
-      } else {
-        const key = $("#apiKeyCompatInput").value.trim();
-        const base = $("#apiBaseUrlInput").value.trim();
-        const model = $("#apiModelCompatInput").value.trim();
-        if (!key || !base || !model) { toast("请填写完整：接口地址、API Key、模型名称"); return; }
-        localStorage.setItem(ChatView.KEYS.compatKey, key);
-        localStorage.setItem(ChatView.KEYS.compatBaseUrl, base);
-        localStorage.setItem(ChatView.KEYS.compatModel, model);
-        $("#apiKeyCompatInput").value = "";
-      }
-      updateKeyStatus();
-      toast("已保存");
-      if (currentView === "chat") ChatView.render();
-    });
-    $("#clearKeyBtn").addEventListener("click", () => {
-      const provider = $("#apiProviderSelect").value;
-      if (provider === "anthropic") localStorage.removeItem(ChatView.KEYS.anthropicKey);
-      else localStorage.removeItem(ChatView.KEYS.compatKey);
-      updateKeyStatus();
-      toast("已删除密钥");
-      if (currentView === "chat") ChatView.render();
-    });
-
-    $all(".toggle-visibility").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const input = $("#" + btn.dataset.target);
-        const revealed = input.type === "text";
-        input.type = revealed ? "password" : "text";
-        btn.textContent = revealed ? "👁" : "🙈";
-        btn.classList.toggle("revealed", !revealed);
-      });
-    });
-
-    $("#testConnBtn").addEventListener("click", async () => {
-      const provider = $("#apiProviderSelect").value;
-      const result = $("#testConnResult");
-      const btn = $("#testConnBtn");
-      const params = provider === "anthropic"
-        ? { provider, key: $("#apiKeyInput").value.trim() || ChatView.getAnthropicKey(), model: $("#apiModelSelect").value }
-        : {
-            provider,
-            key: $("#apiKeyCompatInput").value.trim() || ChatView.getCompatKey(),
-            baseUrl: $("#apiBaseUrlInput").value.trim(),
-            model: $("#apiModelCompatInput").value.trim(),
-          };
-      if (!params.key || (provider !== "anthropic" && (!params.baseUrl || !params.model))) {
-        result.textContent = "⚠️ 请先填写完整的接口地址 / API Key / 模型名称。";
-        return;
-      }
-      btn.disabled = true;
-      result.textContent = "🔄 正在测试连接…";
-      const res = await ChatView.testConnection(params);
-      result.textContent = res.ok ? "✅ 连接成功！这组设置可以正常使用。" : `❌ 连接失败：${res.message}`;
-      btn.disabled = false;
-    });
   }
 
   // ---------- Boot ----------
