@@ -26,19 +26,6 @@ python3 -m http.server 8000
 - `data/vocabulary.json` 是去重后的核心词汇表（465 个），按课整理，每个词有中文释义、词性和例句。
 - `data/sentences.json`、`data/translations.json`、`data/dialogues.json`、`data/questions.json` 分别是句子练习、英汉互译、对话、扩展问答的内容。
 
-## 用本地 Ollama 扩充例句（可选）
-
-`tools/ollama_generate.py` 调用你电脑上的 Ollama 模型，给还没有例句的单词造简单句子，自动过滤超纲词和重复句。需要在装了 Ollama 的电脑上运行，只用 Python 自带的库：
-
-```bash
-python3 tools/ollama_generate.py generate --lesson 1 --limit 20   # 生成草稿到 tools/generated/
-# 打开草稿文件，删掉不满意的句子、改掉别扭的中文
-python3 tools/ollama_generate.py merge tools/generated/<文件名>.json   # 合并进 data/sentences.json
-python3 tools/check_data.py
-```
-
-默认模型是 `qwen3.5:9b-mlx`，可以用 `--model` 换；合并进翻译练习用 `--into translations`。
-
 ## 添加新课件（比如以后的 Part 7）
 
 1. 把新的 .docx 放进 `courseware/`。
