@@ -6,14 +6,30 @@
 const TTS = (() => {
   const RATE_KEY = "engcourse_tts_rate";
   const VOICE_KEY = "engcourse_tts_voice";
+  const LANG = "en-US";
   const EXTENSIONS = ["mp3", "ogg", "wav"];
+  // macOS/iOS ship en-US novelty voices (Bubbles, Zarvox, ...) that are useless for learning pronunciation.
+  const NOVELTY = /\b(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|fred|junior|kathy|ralph|grandma|grandpa|rocko|eddy|flo|reed|sandy|shelley)\b/i;
   const missingCache = new Set();
   let voices = [];
   let currentAudio = null;
 
+  const isUS = (v) => (v.lang || "").replace("_", "-").toLowerCase() === "en-us";
+
+  function voiceScore(v) {
+    const n = v.name;
+    if (/natural|neural|online/i.test(n)) return 5;
+    if (/premium/i.test(n)) return 4;
+    if (/enhanced/i.test(n) || /^google us english/i.test(n)) return 3;
+    if (/samantha|ava|allison|aria|jenny|zoe|nicky|susan/i.test(n)) return 2;
+    return 1;
+  }
+
   function refreshVoices() {
     if (typeof speechSynthesis === "undefined") return [];
-    voices = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.toLowerCase().startsWith("en"));
+    voices = speechSynthesis.getVoices()
+      .filter((v) => isUS(v) && !NOVELTY.test(v.name))
+      .sort((a, b) => voiceScore(b) - voiceScore(a));
     return voices;
   }
 
@@ -43,6 +59,9 @@ const TTS = (() => {
     localStorage.setItem(VOICE_KEY, name || "");
   }
 
+  // A previously saved non-US voice is ignored because the list only holds en-US voices.
+  // If the device has no US voice at all, fall back to any English voice rather than
+  // letting the engine read English with e.g. a Chinese voice.
   function pickVoice() {
     const wanted = getVoiceName();
     const list = getVoices();
@@ -50,13 +69,9 @@ const TTS = (() => {
       const found = list.find((v) => v.name === wanted);
       if (found) return found;
     }
-    // Prefer an "Online"/"Natural" sounding voice if present, then any en-US, then any English voice.
-    return (
-      list.find((v) => /online|natural/i.test(v.name)) ||
-      list.find((v) => v.lang.toLowerCase() === "en-us") ||
-      list[0] ||
-      null
-    );
+    if (list[0]) return list[0];
+    if (typeof speechSynthesis === "undefined") return null;
+    return speechSynthesis.getVoices().find((v) => /^en/i.test(v.lang || "")) || null;
   }
 
   function speakBrowser(text) {
@@ -67,6 +82,7 @@ const TTS = (() => {
       }
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = LANG;
       const v = pickVoice();
       if (v) utter.voice = v;
       utter.rate = getRate();

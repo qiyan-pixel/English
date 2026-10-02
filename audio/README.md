@@ -1,7 +1,9 @@
 # Optional pre-recorded audio
 
 The site plays audio for words and sentences using the browser's built-in
-speech (Web Speech API) by default — no setup needed.
+speech (Web Speech API) by default — no setup needed. It always uses an
+American English (en-US) voice, so any recordings you add should also be
+American English to keep the accent consistent.
 
 If you generate better audio yourself (any local TTS tool, or real
 recordings), drop the files in here using this naming convention and the

@@ -11,7 +11,14 @@ const Progress = (() => {
   }
 
   function defaultState() {
-    return { items: {}, streak: { lastDate: null, count: 0 }, createdAt: Date.now() };
+    return { items: {}, streak: { lastDate: null, count: 0 }, stars: { total: 0, today: 0, date: null }, createdAt: Date.now() };
+  }
+
+  function fillDefaults(s) {
+    if (!s.items) s.items = {};
+    if (!s.streak) s.streak = { lastDate: null, count: 0 };
+    if (!s.stars) s.stars = { total: 0, today: 0, date: null };
+    return s;
   }
 
   function load() {
@@ -22,9 +29,7 @@ const Progress = (() => {
     } catch (e) {
       state = defaultState();
     }
-    if (!state.items) state.items = {};
-    if (!state.streak) state.streak = { lastDate: null, count: 0 };
-    return state;
+    return fillDefaults(state);
   }
 
   function save() {
@@ -94,6 +99,26 @@ const Progress = (() => {
     return state.streak.count;
   }
 
+  function getStars() {
+    load();
+    return { total: state.stars.total, today: state.stars.date === todayStr() ? state.stars.today : 0 };
+  }
+
+  // Awarded only for answers the site actually checked (not self-graded ones),
+  // so stars can't be farmed by tapping "I know it".
+  function addStar() {
+    load();
+    const today = todayStr();
+    if (state.stars.date !== today) {
+      state.stars.date = today;
+      state.stars.today = 0;
+    }
+    state.stars.total += 1;
+    state.stars.today += 1;
+    save();
+    window.dispatchEvent(new CustomEvent("engcourse:star", { detail: getStars() }));
+  }
+
   function exportJSON() {
     load();
     return JSON.stringify(state, null, 2);
@@ -104,7 +129,7 @@ const Progress = (() => {
     if (!parsed || typeof parsed !== "object" || !parsed.items) {
       throw new Error("这不是有效的学习记录文件");
     }
-    state = parsed;
+    state = fillDefaults(parsed);
     save();
   }
 
@@ -113,5 +138,5 @@ const Progress = (() => {
     save();
   }
 
-  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, exportJSON, importJSON, resetAll };
+  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, getStars, addStar, exportJSON, importJSON, resetAll };
 })();

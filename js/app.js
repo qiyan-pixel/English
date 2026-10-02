@@ -14,49 +14,40 @@
   }
 
   // ---------- Navigation ----------
-  function switchView(view) {
+  function switchView(view, mode) {
     currentView = view;
+    if (mode) markModeTab(view, mode);
     $all(".view").forEach((v) => v.classList.remove("active"));
     $(`#view-${view}`).classList.add("active");
     $all(".nav-item").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
-    closeMobileNav();
-    initViewModule(view);
+    window.scrollTo(0, 0);
+    initViewModule(view, mode);
+  }
+
+  function markModeTab(view, mode) {
+    const tab = $(`#view-${view} .mode-tab[data-mode="${mode}"]`);
+    if (tab) $all(".mode-tab", tab.parentElement).forEach((b) => b.classList.toggle("active", b === tab));
   }
 
   function updateVocabScopeNote() {
     const { vocabulary, lessons } = AppData.get();
     const count = lessonFilter === "all" ? vocabulary.length : vocabulary.filter((v) => v.lesson === lessonFilter).length;
     const label = lessonFilter === "all" ? "全部 6 课" : (lessons.find((l) => l.id === lessonFilter)?.title || `第 ${lessonFilter} 课`);
-    $("#vocabScopeNote").textContent = `当前范围：${label} · 共 ${count} 个单词 · 所有单词均来自这 6 份课件，绝不超纲`;
+    $("#vocabScopeNote").textContent = `📚 ${label} · 一共 ${count} 个单词，都来自课件哦`;
   }
 
-  function initViewModule(view) {
-    if (view === "vocab") { VocabView.init($("#vocabArea"), lessonFilter); updateVocabScopeNote(); }
-    else if (view === "sentences") SentencesView.init($("#sentArea"), lessonFilter);
+  function initViewModule(view, mode) {
+    if (view === "vocab") { VocabView.init($("#vocabArea"), lessonFilter, mode); updateVocabScopeNote(); }
+    else if (view === "sentences") SentencesView.init($("#sentArea"), lessonFilter, mode);
     else if (view === "translate") TranslateView.init($("#transArea"), lessonFilter);
     else if (view === "dialogue") DialogueView.init($("#dlgArea"), lessonFilter);
     else if (view === "home") renderHome();
     else if (view === "progress") renderProgress();
   }
 
-  function openMobileNav() {
-    $("#sideNav").classList.add("open");
-    $("#navScrim").classList.add("open");
-    $("#navToggle").setAttribute("aria-expanded", "true");
-  }
-  function closeMobileNav() {
-    $("#sideNav").classList.remove("open");
-    $("#navScrim").classList.remove("open");
-    $("#navToggle").setAttribute("aria-expanded", "false");
-  }
-
   function wireNav() {
     $all(".nav-item").forEach((btn) => btn.addEventListener("click", () => switchView(btn.dataset.view)));
-    $all(".quick-link").forEach((btn) => btn.addEventListener("click", () => switchView(btn.dataset.view)));
-    $("#navToggle").addEventListener("click", () => {
-      $("#sideNav").classList.contains("open") ? closeMobileNav() : openMobileNav();
-    });
-    $("#navScrim").addEventListener("click", closeMobileNav);
+    $all(".game-tile").forEach((btn) => btn.addEventListener("click", () => switchView(btn.dataset.view, btn.dataset.mode)));
   }
 
   function wireModeTabs(containerId, onChange) {
@@ -71,25 +62,26 @@
   }
 
   // ---------- Lesson picker ----------
+  // Rendered twice: in the side nav (wide screens) and as a row above the
+  // content (phones/tablets, where the nav becomes a bottom tab bar).
   function renderLessonChips() {
     const { lessons } = AppData.get();
-    const wrap = $("#lessonChips");
     const chips = [{ id: "all", title: "全部 All" }, ...lessons.map((l) => ({ id: l.id, title: `L${l.id}` }))];
-    wrap.innerHTML = chips.map((c) =>
-      `<button class="lesson-chip ${c.id === lessonFilter ? "active" : ""}" data-lesson="${c.id}">${c.title}</button>`
-    ).join("");
-    wrap.addEventListener("click", (e) => {
-      const btn = e.target.closest(".lesson-chip");
-      if (!btn) return;
-      lessonFilter = btn.dataset.lesson === "all" ? "all" : Number(btn.dataset.lesson);
-      $all(".lesson-chip", wrap).forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      if (currentView === "vocab") { VocabView.setLesson(lessonFilter); updateVocabScopeNote(); }
-      else if (currentView === "sentences") SentencesView.setLesson(lessonFilter);
-      else if (currentView === "translate") TranslateView.setLesson(lessonFilter);
-      else if (currentView === "dialogue") DialogueView.setLesson(lessonFilter);
-      else if (currentView === "home") renderHome();
-      else if (currentView === "progress") renderProgress();
+    $all("[data-chips]").forEach((wrap) => {
+      wrap.innerHTML = chips.map((c) =>
+        `<button class="lesson-chip ${c.id === lessonFilter ? "active" : ""}" data-lesson="${c.id}">${c.title}</button>`
+      ).join("");
+      wrap.addEventListener("click", (e) => {
+        const btn = e.target.closest(".lesson-chip");
+        if (!btn) return;
+        selectLesson(btn.dataset.lesson === "all" ? "all" : Number(btn.dataset.lesson));
+        if (currentView === "vocab") { VocabView.setLesson(lessonFilter); updateVocabScopeNote(); }
+        else if (currentView === "sentences") SentencesView.setLesson(lessonFilter);
+        else if (currentView === "translate") TranslateView.setLesson(lessonFilter);
+        else if (currentView === "dialogue") DialogueView.setLesson(lessonFilter);
+        else if (currentView === "home") renderHome();
+        else if (currentView === "progress") renderProgress();
+      });
     });
   }
 
@@ -98,26 +90,57 @@
     $all(".lesson-chip").forEach((b) => b.classList.toggle("active", b.dataset.lesson == id));
   }
 
+  // ---------- Stars & badges ----------
+  function updateBadges() {
+    $("#starBadge").textContent = `⭐ ${Progress.getStars().total}`;
+    $("#streakBadge").textContent = `🔥 ${Progress.getStreak()}`;
+  }
+
+  function onStar(e) {
+    const { total } = e.detail;
+    const badge = $("#starBadge");
+    updateBadges();
+    badge.classList.remove("pop");
+    void badge.offsetWidth;
+    badge.classList.add("pop");
+    const plus = document.createElement("span");
+    plus.className = "plus-one";
+    plus.textContent = "+1 ⭐";
+    plus.addEventListener("animationend", () => plus.remove());
+    badge.appendChild(plus);
+    if (total % 10 === 0) {
+      Fx.burst(badge, 24, 180);
+      toast(`🎉 太厉害了！已经收集了 ${total} 颗星星！`);
+    }
+  }
+
+  function statPill(emoji, num, label, color) {
+    return `<div class="stat-pill c-${color}"><span class="sp-emoji">${emoji}</span><span class="num">${num}</span><span class="label">${label}</span></div>`;
+  }
+
   // ---------- Home ----------
+  const LESSON_EMOJI = ["👋", "⏰", "🎾", "❤️", "✈️", "🏠"];
+  const LESSON_COLORS = ["blue", "orange", "pink", "purple", "teal", "green"];
+
   function renderHome() {
     const { lessons, vocabulary } = AppData.get();
-    const totalWords = vocabulary.length;
     const overall = Progress.statsFor("vocab", vocabulary.map((v) => v.id));
-    $("#homeStats").innerHTML = `
-      <div class="stat-pill"><span class="num">${totalWords}</span><span class="label">课件总词汇（已去重）</span></div>
-      <div class="stat-pill"><span class="num">${overall.mastered}</span><span class="label">已掌握单词</span></div>
-      <div class="stat-pill"><span class="num">${overall.attempted}</span><span class="label">已练习过单词</span></div>
-      <div class="stat-pill"><span class="num">${Progress.getStreak()}</span><span class="label">连续学习天数</span></div>
-    `;
-    $("#lessonCards").innerHTML = lessons.map((l) => {
+    const stars = Progress.getStars();
+    $("#homeStats").innerHTML =
+      statPill("⭐", stars.today, "今天的星星", "yellow") +
+      statPill("🏆", stars.total, "星星总数", "orange") +
+      statPill("🔤", `${overall.mastered}<small>/${vocabulary.length}</small>`, "学会的单词", "blue") +
+      statPill("🔥", Progress.getStreak(), "连续学习天数", "pink");
+    $("#lessonCards").innerHTML = lessons.map((l, i) => {
       const ids = vocabulary.filter((v) => v.lesson === l.id).map((v) => v.id);
       const stats = Progress.statsFor("vocab", ids);
       return `
-        <button class="lesson-card" data-lesson="${l.id}">
+        <button class="lesson-card c-${LESSON_COLORS[i % LESSON_COLORS.length]}" data-lesson="${l.id}">
+          <span class="lc-badge">${LESSON_EMOJI[i % LESSON_EMOJI.length]}</span>
           <h3>${Util.escapeHtml(l.title)}</h3>
           <p>${Util.escapeHtml(l.grammar_zh)}</p>
           <div class="bar-track"><div class="bar-fill" style="width:${stats.pct}%"></div></div>
-          <span class="pct">${ids.length} 个单词 · 掌握 ${stats.pct}%</span>
+          <span class="pct">${ids.length} 个单词 · 学会 ${stats.pct}%</span>
         </button>
       `;
     }).join("");
@@ -131,23 +154,25 @@
 
   // ---------- Progress page ----------
   function renderProgress() {
-    const { vocabulary, sentences, translations } = AppData.get();
-    const v = Progress.statsFor("vocab", vocabulary.map((x) => x.id));
+    const { vocabulary, sentences, translations, lessons } = AppData.get();
+    const ids = vocabulary.map((x) => x.id);
+    const v = Progress.statsFor("vocab", ids);
+    const sp = Progress.statsFor("spell", ids);
     const s = Progress.statsFor("sentence", sentences.map((x) => x.id));
     const t = Progress.statsFor("translation", translations.map((x) => x.id));
-    $("#progressSummary").innerHTML = `
-      <div class="stat-pill"><span class="num">${v.mastered}/${v.total}</span><span class="label">单词掌握</span></div>
-      <div class="stat-pill"><span class="num">${s.attempted}/${s.total}</span><span class="label">句子练习过</span></div>
-      <div class="stat-pill"><span class="num">${t.attempted}/${t.total}</span><span class="label">翻译练习过</span></div>
-      <div class="stat-pill"><span class="num">${Progress.getStreak()}</span><span class="label">连续学习天数</span></div>
-    `;
-    const { lessons } = AppData.get();
-    $("#progressByLesson").innerHTML = lessons.map((l) => {
-      const ids = vocabulary.filter((x) => x.lesson === l.id).map((x) => x.id);
-      const stats = Progress.statsFor("vocab", ids);
+    $("#progressSummary").innerHTML =
+      statPill("⭐", Progress.getStars().total, "星星总数", "yellow") +
+      statPill("🔤", `${v.mastered}<small>/${v.total}</small>`, "学会的单词", "blue") +
+      statPill("✍️", `${sp.mastered}<small>/${sp.total}</small>`, "能完整拼写", "orange") +
+      statPill("🗣️", `${s.attempted}<small>/${s.total}</small>`, "练过的句子", "pink") +
+      statPill("🔁", `${t.attempted}<small>/${t.total}</small>`, "练过的翻译", "purple") +
+      statPill("🔥", Progress.getStreak(), "连续学习天数", "green");
+    $("#progressByLesson").innerHTML = lessons.map((l, i) => {
+      const lessonIds = vocabulary.filter((x) => x.lesson === l.id).map((x) => x.id);
+      const stats = Progress.statsFor("vocab", lessonIds);
       return `
-        <div class="progress-lesson-row">
-          <span class="name">${Util.escapeHtml(l.title)}</span>
+        <div class="progress-lesson-row c-${LESSON_COLORS[i % LESSON_COLORS.length]}">
+          <span class="name">${LESSON_EMOJI[i % LESSON_EMOJI.length]} ${Util.escapeHtml(l.title)}</span>
           <div class="bar-track"><div class="bar-fill" style="width:${stats.pct}%"></div></div>
           <span class="pct">${stats.pct}%</span>
         </div>
@@ -173,6 +198,7 @@
         try {
           Progress.importJSON(reader.result);
           toast("导入成功！");
+          updateBadges();
           renderProgress();
           renderHome();
         } catch (err) {
@@ -186,6 +212,7 @@
       if (confirm("确定要清空全部学习记录吗？此操作无法撤销。")) {
         Progress.resetAll();
         toast("已重置学习进度");
+        updateBadges();
         renderProgress();
         renderHome();
       }
@@ -196,13 +223,14 @@
   function populateVoiceSelect() {
     const sel = $("#voiceSelect");
     const voices = TTS.getVoices();
-    const current = TTS.getVoiceName();
+    const saved = TTS.getVoiceName();
     if (!voices.length) {
-      sel.innerHTML = `<option value="">（浏览器暂无可用英文语音，将稍后自动加载）</option>`;
+      sel.innerHTML = `<option value="">（这台设备暂时没有美式英语语音，稍后会自动加载）</option>`;
       return;
     }
-    sel.innerHTML = voices.map((v) => `<option value="${Util.escapeHtml(v.name)}">${Util.escapeHtml(v.name)} (${v.lang})</option>`).join("");
-    if (current) sel.value = current;
+    sel.innerHTML = `<option value="">自动选择（推荐）· ${Util.escapeHtml(voices[0].name)}</option>` +
+      voices.map((v) => `<option value="${Util.escapeHtml(v.name)}">${Util.escapeHtml(v.name)}</option>`).join("");
+    sel.value = voices.some((v) => v.name === saved) ? saved : "";
   }
 
   function openSettingsModal() {
@@ -212,7 +240,6 @@
     $("#rateRange").value = TTS.getRate();
     $("#rateValue").textContent = TTS.getRate().toFixed(1) + "x";
   }
-  window.openSettingsModal = openSettingsModal;
 
   function closeSettingsModal() {
     $("#settingsModal").hidden = true;
@@ -239,7 +266,9 @@
       $("#main").innerHTML = `<p style="color:var(--danger)">加载课程数据失败：${err.message}<br>如果你是直接双击打开 index.html，请改用本地服务器打开（例如 python3 -m http.server），浏览器的安全限制不允许直接读取本地文件。</p>`;
       return;
     }
-    $("#streakBadge").textContent = `🔥 ${Progress.touchStreak()}`;
+    Progress.touchStreak();
+    updateBadges();
+    window.addEventListener("engcourse:star", onStar);
     renderLessonChips();
     wireNav();
     wireSettings();

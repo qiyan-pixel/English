@@ -95,9 +95,10 @@ const SentencesView = (() => {
       const correct = diff.every((t) => t.ok) && diff.length > 0;
       const html = diff.map((t) => `<span class="${t.ok ? "diff-ok" : "diff-bad"}">${Util.escapeHtml(t.text)}</span>`).join(" ");
       feedback.className = "exercise-feedback show " + (correct ? "correct" : "wrong");
-      feedback.innerHTML = `${correct ? "✅ 完全正确！" : "对照原句（绿色=对，红色=漏掉或拼错的词）："}<br>${html}` +
-        (s.zh ? `<br><span style="color:var(--text-dim)">${Util.escapeHtml(s.zh)}</span>` : "");
+      feedback.innerHTML = `${correct ? "🎉 完全正确！" : "对照原句（绿色=对，红色=漏掉或拼错的词）："}<br>${html}` +
+        (s.zh ? `<br><span class="dim">${Util.escapeHtml(s.zh)}</span>` : "");
       Progress.recordResult("sentence", s.id, correct);
+      if (correct) { Progress.addStar(); Fx.burst(feedback, 12); }
       input.disabled = true;
       container.querySelector("#sentDictCheckBtn").hidden = true;
       const nextBtn = document.createElement("button");
@@ -116,8 +117,9 @@ const SentencesView = (() => {
     else renderDictation();
   }
 
-  function init(el, lessonFilter) {
+  function init(el, lessonFilter, startMode) {
     container = el;
+    if (startMode) mode = startMode;
     buildQueue(lessonFilter);
     render();
   }

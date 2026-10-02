@@ -60,8 +60,9 @@ const TranslateView = (() => {
       const diff = Util.wordDiff(t.en, input.value || "");
       const html = diff.map((tok) => `<span class="${tok.ok ? "diff-ok" : "diff-bad"}">${Util.escapeHtml(tok.text)}</span>`).join(" ");
       feedback.className = "exercise-feedback show " + (exact ? "correct" : "wrong");
-      feedback.innerHTML = (exact ? "✅ 和参考答案完全一致！" : "参考答案（翻译不必逐字相同，意思对、语法对就可以）：") +
+      feedback.innerHTML = (exact ? "🎉 和参考答案完全一致！" : "参考答案（翻译不必逐字相同，意思对、语法对就可以）：") +
         `<br><b>${Util.escapeHtml(t.en)}</b><br>你的答案对比：${html}`;
+      if (exact) { Progress.addStar(); Fx.burst(feedback, 10); }
       container.querySelector("#tCheckBtn").hidden = true;
       input.disabled = true;
       const row = document.createElement("div");
@@ -81,7 +82,7 @@ const TranslateView = (() => {
       <div class="exercise-card">
         <div class="exercise-prompt">
           <button class="audio-btn small" id="tAudioBtn" title="发音">🔊</button>
-          🇬🇧 ${Util.escapeHtml(t.en)}
+          🇺🇸 ${Util.escapeHtml(t.en)}
         </div>
         <p class="hint">想一想这句话的中文意思，然后点击查看答案</p>
         <div class="card-controls" style="justify-content:flex-start;margin-top:0;">
