@@ -15,6 +15,7 @@ python3 -m http.server 8000
 
 - `courseware/` 是原始的 6 份课件（.docx），**不会**被发布到公开网站上（见下方"部署"）。
 - `tools/extract_docx_text.py` 把课件的文字和表格导出成纯文本，方便整理内容。
+- 课件里有 44 张课本页面截图，上面的英文已经人工转写到 `tools/image_text/L1.txt`～`L6.txt`（按图上原样，填空处写作 `___`），也算作课件内容。
 - `tools/scope_check.py` 和 `tools/check_data.py` 会读取全部 6 份课件，生成一份"课件里出现过的所有单词"的清单（`tools/corpus_words.json`），然后检查 `data/*.json` 里的每一句英文，确保没有用到课件之外的生词。改完 `data/` 下任何文件后，运行一遍：
 
   ```bash
@@ -23,13 +24,13 @@ python3 -m http.server 8000
 
   如果提示有超纲单词，会列出具体是哪个词、在哪个文件里。
 
-- `data/vocabulary.json` 是去重后的核心词汇表（465 个），按课整理，每个词有中文释义、词性和例句。
+- `data/vocabulary.json` 是去重后的核心词汇表（546 个，包括课件图片里出现的单词），按课整理，每个词有中文释义、词性和例句。
 - `data/sentences.json`、`data/translations.json`、`data/dialogues.json`、`data/questions.json` 分别是句子练习、英汉互译、对话、扩展问答的内容。
 
 ## 添加新课件（比如以后的 Part 7）
 
 1. 把新的 .docx 放进 `courseware/`。
-2. 用 `tools/extract_docx_text.py` 导出文字，整理出新单词、例句、翻译句、对话。
+2. 用 `tools/extract_docx_text.py` 导出文字；如果课件里有带英文的图片，把图上的英文转写进 `tools/image_text/L7.txt`。然后整理出新单词、例句、翻译句、对话。
 3. 照着现有格式加进 `data/*.json`（记得给新的一课分配下一个 `lesson` 编号），并在 `data/lessons.json` 里加一条课程说明。
 4. 跑一遍 `python3 tools/scope_check.py build && python3 tools/check_data.py`，确认没有超纲词。
 

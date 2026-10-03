@@ -1,4 +1,5 @@
-"""Build the ground-truth word set from the 6 courseware .docx files, and
+"""Build the ground-truth word set from the 6 courseware .docx files (plus the
+hand transcriptions of their embedded page images in image_text/), and
 check any text (site data files, generated dialogue/chat prompts) against it.
 
 This is the enforcement mechanism behind the site's core rule: nothing on
@@ -20,6 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 COURSEWARE = HERE.parent / "courseware"
 CORPUS_JSON = HERE / "corpus_words.json"
+IMAGE_TEXT = HERE / "image_text"
 
 # Basic function/grammar words and small closed classes that are pervasive
 # in ordinary English and effectively already "in scope" for any beginner
@@ -66,6 +68,11 @@ def build():
                 for row in block.rows:
                     for cell in row.cells:
                         text_parts.append(cell.text)
+
+    # The docx files embed scanned textbook pages as images; their English was
+    # transcribed by hand into image_text/ so it counts as courseware too.
+    for path in sorted(IMAGE_TEXT.glob("*.txt")):
+        text_parts.append(path.read_text(encoding="utf-8"))
 
     text = "\n".join(text_parts)
     text = text.replace("’", "'").replace("‘", "'")
