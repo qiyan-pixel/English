@@ -41,8 +41,14 @@ const TranslateView = (() => {
   function renderZh2En() {
     const t = current();
     if (!t) { container.innerHTML = `<p class="hint">这个范围还没有翻译句子。</p>`; return; }
+    renderZh2EnCard(container, t, { header: progressLine(), onNext: () => { pos = (pos + 1) % queue.length; render(); } });
+  }
+
+  // Shared by the zh->en tab and the mistake book. The learner typed an answer
+  // and compared it, so the self-grade counts as a checked result.
+  function renderZh2EnCard(container, t, { header = "", onNext, onResult } = {}) {
     container.innerHTML = `
-      ${progressLine()}
+      ${header}
       <div class="exercise-card">
         <div class="exercise-prompt">🇨🇳 ${Util.escapeHtml(t.zh)}</div>
         <textarea class="exercise-input" id="tInput" rows="2" placeholder="Translate into English..." autocomplete="off" spellcheck="false"></textarea>
@@ -55,6 +61,7 @@ const TranslateView = (() => {
     const input = container.querySelector("#tInput");
     input.focus();
     container.querySelector("#tCheckBtn").addEventListener("click", () => {
+      if (!input.value.trim()) { input.focus(); return; }
       const feedback = container.querySelector("#tFeedback");
       const exact = Util.isCloseMatch(input.value, t.en);
       const diff = Util.wordDiff(t.en, input.value || "");
@@ -69,8 +76,13 @@ const TranslateView = (() => {
       row.className = "card-controls";
       row.innerHTML = `<button class="btn danger-ghost" id="tNo">😕 我没翻对</button><button class="btn success" id="tYes">😊 意思对，算我对</button>`;
       feedback.after(row);
-      row.querySelector("#tNo").addEventListener("click", () => grade(t, false));
-      row.querySelector("#tYes").addEventListener("click", () => grade(t, true));
+      const finish = (correct) => {
+        Progress.recordResult("translation", t.id, correct, true);
+        if (onResult) onResult(correct, feedback);
+        onNext();
+      };
+      row.querySelector("#tNo").addEventListener("click", () => finish(false));
+      row.querySelector("#tYes").addEventListener("click", () => finish(true));
     });
   }
 
@@ -123,5 +135,5 @@ const TranslateView = (() => {
     render();
   }
 
-  return { init, setDirection, setLesson };
+  return { init, setDirection, setLesson, renderZh2EnCard };
 })();

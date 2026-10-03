@@ -161,11 +161,17 @@ const VocabView = (() => {
       container.innerHTML = progressLine() + `<p class="hint">这个范围还没有单词，换一个课件试试吧。</p>`;
       return;
     }
+    renderSpellCard(container, w, { header: progressLine(), onNext: () => { pos = (pos + 1) % queue.length; render(); } });
+  }
+
+  // Shared by the spelling tab and the mistake book. Records the result itself;
+  // opts.onResult(correct, feedbackEl) lets the caller add extra feedback afterwards.
+  function renderSpellCard(container, w, { header = "", onNext, onResult } = {}) {
     const stageIdx = spellStage(w.id);
     const stage = SPELL_STAGES[stageIdx];
     const blanks = stage.full ? null : pickBlanks(w.en, stage);
     container.innerHTML = `
-      ${progressLine()}
+      ${header}
       <div class="exercise-card spell-card">
         <div class="spell-head">
           <span class="spell-stars" title="这个单词的拼写难度">${starsHtml(stageIdx)}</span>
@@ -198,7 +204,7 @@ const VocabView = (() => {
     if (input) input.focus();
     else boxes[0]?.focus();
     let done = false;
-    const goNext = () => { pos = (pos + 1) % queue.length; render(); };
+    const goNext = onNext;
 
     // A second Enter after checking moves on, so the keyboard alone is enough.
     function check() {
@@ -229,7 +235,7 @@ const VocabView = (() => {
         });
         board.classList.add(correct ? "win" : "miss");
       }
-      Progress.recordResult("vocab", w.id, correct);
+      Progress.recordResult("vocab", w.id, correct, true);
       const after = Progress.recordResult("spell", w.id, correct);
       const newIdx = Math.min(after.level, SPELL_STAGES.length - 1);
       const detail = `<b>${Util.escapeHtml(w.en)}</b> — ${Util.escapeHtml(w.zh)}<br><span class="dim">${Util.escapeHtml(w.example)}</span>`;
@@ -251,11 +257,13 @@ const VocabView = (() => {
       nextBtn.textContent = "下一个 Next ➡️";
       nextBtn.addEventListener("click", goNext);
       feedback.after(nextBtn);
+      if (onResult) onResult(correct, feedback);
     }
     checkBtn.addEventListener("click", check);
     container.querySelector("#dictSkipBtn").addEventListener("click", () => {
+      Progress.recordResult("vocab", w.id, false, true);
       Progress.recordResult("spell", w.id, false);
-      advance(false);
+      goNext();
     });
     if (input) input.addEventListener("keydown", (e) => { if (e.key === "Enter") check(); });
     else wireLetterBoxes(boxes, check);
@@ -289,7 +297,7 @@ const VocabView = (() => {
         feedback.innerHTML = correct
           ? `🎉 正确！<b>${Util.escapeHtml(w.en)}</b>`
           : `💪 正确答案：<b>${Util.escapeHtml(w.en)}</b>`;
-        Progress.recordResult("vocab", w.id, correct);
+        Progress.recordResult("vocab", w.id, correct, true);
         if (correct) { Progress.addStar(); Fx.burst(feedback, 10); }
         input.disabled = true;
         container.querySelector("#trCheckBtn").hidden = true;
@@ -351,5 +359,5 @@ const VocabView = (() => {
     render();
   }
 
-  return { init, setMode, setLesson, getMode: () => mode };
+  return { init, setMode, setLesson, getMode: () => mode, renderSpellCard };
 })();

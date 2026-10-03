@@ -41,6 +41,7 @@
     else if (view === "sentences") SentencesView.init($("#sentArea"), lessonFilter, mode);
     else if (view === "translate") TranslateView.init($("#transArea"), lessonFilter);
     else if (view === "dialogue") DialogueView.init($("#dlgArea"), lessonFilter);
+    else if (view === "mistakes") MistakesView.init($("#mistakeArea"), lessonFilter);
     else if (view === "home") renderHome();
     else if (view === "progress") renderProgress();
   }
@@ -79,6 +80,7 @@
         else if (currentView === "sentences") SentencesView.setLesson(lessonFilter);
         else if (currentView === "translate") TranslateView.setLesson(lessonFilter);
         else if (currentView === "dialogue") DialogueView.setLesson(lessonFilter);
+        else if (currentView === "mistakes") MistakesView.setLesson(lessonFilter);
         else if (currentView === "home") renderHome();
         else if (currentView === "progress") renderProgress();
       });
@@ -94,6 +96,19 @@
   function updateBadges() {
     $("#starBadge").textContent = `⭐ ${Progress.getStars().total}`;
     $("#streakBadge").textContent = `🔥 ${Progress.getStreak()}`;
+    const n = Progress.getMistakes().length;
+    const badge = $("#mistakeBadge");
+    badge.hidden = n === 0;
+    badge.textContent = n > 99 ? "99+" : String(n);
+  }
+
+  function onMistakeCleared(e) {
+    const { category, id } = e.detail;
+    const { vocabulary, sentences, translations } = AppData.get();
+    const list = { vocab: vocabulary, sentence: sentences, translation: translations }[category];
+    const item = list.find((x) => x.id === id);
+    const name = item ? (category === "translation" ? item.zh : item.en) : "";
+    toast(`🎓 「${name.length > 24 ? name.slice(0, 24) + "…" : name}」连续答对 ${Progress.MISTAKE_CLEAR_STREAK} 次，从错题本毕业啦！`);
   }
 
   function onStar(e) {
@@ -131,6 +146,11 @@
       statPill("🏆", stars.total, "星星总数", "orange") +
       statPill("🔤", `${overall.mastered}<small>/${vocabulary.length}</small>`, "学会的单词", "blue") +
       statPill("🔥", Progress.getStreak(), "连续学习天数", "pink");
+    const mistakes = Progress.getMistakes().length;
+    $("#homeMistakes").innerHTML = mistakes
+      ? `<button class="mistake-banner" id="mistakeBannerBtn"><span class="mb-emoji">📕</span><span class="mb-text"><b>错题本里有 ${mistakes} 道题</b><small>每道连续答对 3 次就能消灭它！</small></span><span class="mb-go">去练习 ➡️</span></button>`
+      : "";
+    $("#mistakeBannerBtn")?.addEventListener("click", () => switchView("mistakes"));
     $("#lessonCards").innerHTML = lessons.map((l, i) => {
       const ids = vocabulary.filter((v) => v.lesson === l.id).map((v) => v.id);
       const stats = Progress.statsFor("vocab", ids);
@@ -166,6 +186,7 @@
       statPill("✍️", `${sp.mastered}<small>/${sp.total}</small>`, "能完整拼写", "orange") +
       statPill("🗣️", `${s.attempted}<small>/${s.total}</small>`, "练过的句子", "pink") +
       statPill("🔁", `${t.attempted}<small>/${t.total}</small>`, "练过的翻译", "purple") +
+      statPill("📕", Progress.getMistakes().length, "错题本里的题", "red") +
       statPill("🔥", Progress.getStreak(), "连续学习天数", "green");
     $("#progressByLesson").innerHTML = lessons.map((l, i) => {
       const lessonIds = vocabulary.filter((x) => x.lesson === l.id).map((x) => x.id);
@@ -269,6 +290,8 @@
     Progress.touchStreak();
     updateBadges();
     window.addEventListener("engcourse:star", onStar);
+    window.addEventListener("engcourse:mistakes-changed", updateBadges);
+    window.addEventListener("engcourse:mistake-cleared", onMistakeCleared);
     renderLessonChips();
     wireNav();
     wireSettings();

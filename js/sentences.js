@@ -67,8 +67,13 @@ const SentencesView = (() => {
       container.innerHTML = `<p class="hint">这个范围还没有句子，换一个课件试试吧。</p>`;
       return;
     }
+    renderDictationCard(container, s, { header: progressLine(), onNext: () => { pos = (pos + 1) % queue.length; render(); } });
+  }
+
+  // Shared by the dictation tab and the mistake book.
+  function renderDictationCard(container, s, { header = "", onNext, onResult } = {}) {
     container.innerHTML = `
-      ${progressLine()}
+      ${header}
       <div class="exercise-card">
         <div class="exercise-prompt">
           <button class="audio-btn" id="sentDictAudioBtn" title="重听">🔊</button>
@@ -90,22 +95,27 @@ const SentencesView = (() => {
     play();
     input.focus();
 
+    let done = false;
     function check() {
+      if (done) { onNext(); return; }
+      if (!input.value.trim()) { input.focus(); return; }
+      done = true;
       const diff = Util.wordDiff(s.en, input.value);
       const correct = diff.every((t) => t.ok) && diff.length > 0;
       const html = diff.map((t) => `<span class="${t.ok ? "diff-ok" : "diff-bad"}">${Util.escapeHtml(t.text)}</span>`).join(" ");
       feedback.className = "exercise-feedback show " + (correct ? "correct" : "wrong");
       feedback.innerHTML = `${correct ? "🎉 完全正确！" : "对照原句（绿色=对，红色=漏掉或拼错的词）："}<br>${html}` +
         (s.zh ? `<br><span class="dim">${Util.escapeHtml(s.zh)}</span>` : "");
-      Progress.recordResult("sentence", s.id, correct);
+      Progress.recordResult("sentence", s.id, correct, true);
       if (correct) { Progress.addStar(); Fx.burst(feedback, 12); }
-      input.disabled = true;
+      input.readOnly = true;
       container.querySelector("#sentDictCheckBtn").hidden = true;
       const nextBtn = document.createElement("button");
       nextBtn.className = "btn primary";
-      nextBtn.textContent = "下一句 Next";
-      nextBtn.addEventListener("click", () => { pos = (pos + 1) % queue.length; render(); });
+      nextBtn.textContent = "下一句 Next ➡️";
+      nextBtn.addEventListener("click", onNext);
       feedback.after(nextBtn);
+      if (onResult) onResult(correct, feedback);
     }
     container.querySelector("#sentDictCheckBtn").addEventListener("click", check);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); check(); } });
@@ -129,5 +139,5 @@ const SentencesView = (() => {
     render();
   }
 
-  return { init, setMode, setLesson };
+  return { init, setMode, setLesson, renderDictationCard };
 })();

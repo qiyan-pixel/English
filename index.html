@@ -35,6 +35,7 @@
       <li><button class="nav-item c-pink" data-view="sentences"><span class="nav-icon">🗣️</span><span class="nav-label">句子</span><span class="nav-sub">Sentences</span></button></li>
       <li><button class="nav-item c-purple" data-view="translate"><span class="nav-icon">🔁</span><span class="nav-label">翻译</span><span class="nav-sub">Translate</span></button></li>
       <li><button class="nav-item c-teal" data-view="dialogue"><span class="nav-icon">💬</span><span class="nav-label">对话</span><span class="nav-sub">Talk</span></button></li>
+      <li><button class="nav-item c-red" data-view="mistakes"><span class="nav-icon">📕<span class="nav-badge" id="mistakeBadge" hidden></span></span><span class="nav-label">错题</span><span class="nav-sub">Mistakes</span></button></li>
       <li><button class="nav-item c-green" data-view="progress"><span class="nav-icon">🏆</span><span class="nav-label">成绩</span><span class="nav-sub">Progress</span></button></li>
     </ul>
   </nav>
@@ -52,6 +53,7 @@
         </div>
       </div>
       <div id="homeStats" class="stat-row"></div>
+      <div id="homeMistakes"></div>
       <h2 class="section-title">🎮 选一个游戏开始吧</h2>
       <div class="game-tiles">
         <button class="game-tile c-blue" data-view="vocab" data-mode="flashcard"><span class="gt-emoji">🃏</span><span class="gt-title">单词卡片</span><span class="gt-sub">看一看，听一听</span></button>
@@ -110,6 +112,13 @@
       <div id="dlgArea" class="practice-area"></div>
     </section>
 
+    <!-- MISTAKES -->
+    <section id="view-mistakes" class="view">
+      <h1>📕 错题本 <small>Mistakes</small></h1>
+      <p class="subtitle">拼写、句子听写、中译英里答错的题会自动放进这里。每道题<b>连续答对 3 次</b>，才能从错题本毕业 🎓；中途答错，就要重新开始数。</p>
+      <div id="mistakeArea" class="practice-area"></div>
+    </section>
+
     <!-- PROGRESS -->
     <section id="view-progress" class="view">
       <h1>🏆 我的成绩 <small>Progress</small></h1>
@@ -160,6 +169,7 @@
 <script src="js/sentences.js"></script>
 <script src="js/translate.js"></script>
 <script src="js/dialogue.js"></script>
+<script src="js/mistakes.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -11,13 +11,14 @@ const Progress = (() => {
   }
 
   function defaultState() {
-    return { items: {}, streak: { lastDate: null, count: 0 }, stars: { total: 0, today: 0, date: null }, createdAt: Date.now() };
+    return { items: {}, streak: { lastDate: null, count: 0 }, stars: { total: 0, today: 0, date: null }, mistakes: {}, createdAt: Date.now() };
   }
 
   function fillDefaults(s) {
     if (!s.items) s.items = {};
     if (!s.streak) s.streak = { lastDate: null, count: 0 };
     if (!s.stars) s.stars = { total: 0, today: 0, date: null };
+    if (!s.mistakes) s.mistakes = {};
     return s;
   }
 
@@ -49,8 +50,42 @@ const Progress = (() => {
     return state.items[key(category, id)] || { level: 0, seen: 0, correct: 0, wrong: 0, last: 0 };
   }
 
-  function recordResult(category, id, correct) {
+  // Mistake book: an answer the site actually checked (the learner typed it,
+  // rather than tapping "I know it") adds the item when wrong, and it only
+  // graduates after MISTAKE_CLEAR_STREAK checked correct answers in a row.
+  const MISTAKE_CATEGORIES = new Set(["vocab", "sentence", "translation"]);
+  const MISTAKE_CLEAR_STREAK = 3;
+
+  function updateMistake(category, id, correct) {
+    const k = key(category, id);
+    const m = state.mistakes[k];
+    if (!correct) {
+      state.mistakes[k] = { category, id, streak: 0, wrong: (m ? m.wrong : 0) + 1, added: m ? m.added : Date.now() };
+    } else if (m) {
+      m.streak += 1;
+      if (m.streak >= MISTAKE_CLEAR_STREAK) {
+        delete state.mistakes[k];
+        window.dispatchEvent(new CustomEvent("engcourse:mistake-cleared", { detail: { category, id } }));
+      }
+    } else {
+      return;
+    }
+    window.dispatchEvent(new CustomEvent("engcourse:mistakes-changed"));
+  }
+
+  function getMistakes() {
     load();
+    return Object.values(state.mistakes).sort((a, b) => a.streak - b.streak || a.added - b.added);
+  }
+
+  function getMistake(category, id) {
+    load();
+    return state.mistakes[key(category, id)] || null;
+  }
+
+  function recordResult(category, id, correct, checked = false) {
+    load();
+    if (checked && MISTAKE_CATEGORIES.has(category)) updateMistake(category, id, correct);
     const k = key(category, id);
     const cur = state.items[k] || { level: 0, seen: 0, correct: 0, wrong: 0, last: 0 };
     cur.seen += 1;
@@ -138,5 +173,5 @@ const Progress = (() => {
     save();
   }
 
-  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, getStars, addStar, exportJSON, importJSON, resetAll };
+  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, getStars, addStar, getMistakes, getMistake, MISTAKE_CLEAR_STREAK, exportJSON, importJSON, resetAll };
 })();
