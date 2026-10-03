@@ -139,12 +139,13 @@
 
   function renderHome() {
     const { lessons, vocabulary } = AppData.get();
-    const overall = Progress.statsFor("vocab", vocabulary.map((v) => v.id));
+    const scoped = lessonFilter === "all" ? vocabulary : vocabulary.filter((v) => v.lesson === lessonFilter);
+    const overall = Progress.statsFor("vocab", scoped.map((v) => v.id));
     const stars = Progress.getStars();
     $("#homeStats").innerHTML =
       statPill("⭐", stars.today, "今天的星星", "yellow") +
       statPill("🏆", stars.total, "星星总数", "orange") +
-      statPill("🔤", `${overall.mastered}<small>/${vocabulary.length}</small>`, "学会的单词", "blue") +
+      statPill("🔤", `${overall.mastered}<small>/${scoped.length}</small>`, lessonFilter === "all" ? "学会的单词" : `学会的单词 · L${lessonFilter}`, "blue") +
       statPill("🔥", Progress.getStreak(), "连续学习天数", "pink");
     const mistakes = Progress.getMistakes().length;
     $("#homeMistakes").innerHTML = mistakes
