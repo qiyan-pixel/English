@@ -102,13 +102,37 @@ const Progress = (() => {
     return cur;
   }
 
+  const MASTERED_LEVEL = 4;
+
+  // Practice order that survives a page reload: never-seen items first (in
+  // course order), then the weakest, and among equals the least recently seen.
+  function orderForPractice(category, items) {
+    load();
+    return items
+      .map((it, i) => ({ it, i, p: state.items[key(category, it.id)] }))
+      .sort((a, b) => ((a.p ? a.p.level : 0) - (b.p ? b.p.level : 0)) || ((a.p ? a.p.last : 0) - (b.p ? b.p.last : 0)) || (a.i - b.i))
+      .map((x) => x.it);
+  }
+
+  // For read-only practice (e.g. reading a sentence aloud): counts as practised
+  // without changing the mastery level.
+  function markSeen(category, id) {
+    load();
+    const k = key(category, id);
+    const cur = state.items[k] || { level: 0, seen: 0, correct: 0, wrong: 0, last: 0 };
+    cur.seen += 1;
+    cur.last = Date.now();
+    state.items[k] = cur;
+    save();
+  }
+
   function statsFor(category, ids) {
     load();
     let mastered = 0, attempted = 0;
     for (const id of ids) {
       const it = state.items[key(category, id)];
       if (it && it.seen > 0) attempted += 1;
-      if (it && it.level >= 4) mastered += 1;
+      if (it && it.level >= MASTERED_LEVEL) mastered += 1;
     }
     return { total: ids.length, attempted, mastered, pct: ids.length ? Math.round((mastered / ids.length) * 100) : 0 };
   }
@@ -173,5 +197,5 @@ const Progress = (() => {
     save();
   }
 
-  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, getStars, addStar, getMistakes, getMistake, MISTAKE_CLEAR_STREAK, exportJSON, importJSON, resetAll };
+  return { load, getItem, recordResult, statsFor, touchStreak, getStreak, getStars, addStar, getMistakes, getMistake, MISTAKE_CLEAR_STREAK, orderForPractice, markSeen, MASTERED_LEVEL, exportJSON, importJSON, resetAll };
 })();

@@ -14,7 +14,7 @@ const TranslateView = (() => {
   }
 
   function buildQueue(lessonFilter) {
-    queue = Util.shuffle(itemsForLesson(lessonFilter));
+    queue = Progress.orderForPractice("translation", itemsForLesson(lessonFilter));
     pos = 0;
   }
 
@@ -29,7 +29,8 @@ const TranslateView = (() => {
   }
 
   function progressLine() {
-    return `<div class="progress-line"><span>第 ${Math.min(pos + 1, queue.length)} / ${queue.length} 句</span></div>`;
+    const st = Progress.statsFor("translation", queue.map((t) => t.id));
+    return `<div class="progress-line"><span class="saved-stats">✏️ 练过 ${st.attempted} / ${queue.length} 句</span></div>`;
   }
 
   function grade(item, correct) {

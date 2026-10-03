@@ -12,7 +12,7 @@ const SentencesView = (() => {
   }
 
   function buildQueue(lessonFilter) {
-    queue = Util.shuffle(sentencesForLesson(lessonFilter));
+    queue = Progress.orderForPractice("sentence", sentencesForLesson(lessonFilter));
     pos = 0;
   }
 
@@ -27,7 +27,8 @@ const SentencesView = (() => {
   }
 
   function progressLine() {
-    return `<div class="progress-line"><span>第 ${Math.min(pos + 1, queue.length)} / ${queue.length} 句</span></div>`;
+    const st = Progress.statsFor("sentence", queue.map((s) => s.id));
+    return `<div class="progress-line"><span class="saved-stats">✏️ 练过 ${st.attempted} / ${queue.length} 句</span></div>`;
   }
 
   function renderRead() {
@@ -57,7 +58,11 @@ const SentencesView = (() => {
       container.querySelector("#readZh").hidden = false;
     });
     container.querySelector("#readPrev").addEventListener("click", () => { pos = (pos - 1 + queue.length) % queue.length; render(); });
-    container.querySelector("#readNext").addEventListener("click", () => { pos = (pos + 1) % queue.length; render(); });
+    container.querySelector("#readNext").addEventListener("click", () => {
+      Progress.markSeen("sentence", s.id);
+      pos = (pos + 1) % queue.length;
+      render();
+    });
     play();
   }
 

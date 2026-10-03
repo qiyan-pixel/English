@@ -145,7 +145,7 @@
     $("#homeStats").innerHTML =
       statPill("⭐", stars.today, "今天的星星", "yellow") +
       statPill("🏆", stars.total, "星星总数", "orange") +
-      statPill("🔤", `${overall.mastered}<small>/${scoped.length}</small>`, lessonFilter === "all" ? "学会的单词" : `学会的单词 · L${lessonFilter}`, "blue") +
+      statPill("🔤", `${overall.mastered}<small>/${scoped.length}</small>`, `学会的单词${lessonFilter === "all" ? "" : ` · L${lessonFilter}`}（练过 ${overall.attempted}）`, "blue") +
       statPill("🔥", Progress.getStreak(), "连续学习天数", "pink");
     const mistakes = Progress.getMistakes().length;
     $("#homeMistakes").innerHTML = mistakes

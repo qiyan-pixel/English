@@ -305,6 +305,10 @@ h1 + .stat-row { margin-top: 16px; }
 .flashcard .word-example { font-size: 1rem; color: var(--text-dim); margin-top: 8px; display: none; font-style: italic; line-height: 1.6; }
 .flashcard.revealed .word-zh, .flashcard.revealed .word-example { display: block; animation: revealFade .3s cubic-bezier(.2,.8,.2,1) backwards; }
 .flashcard.revealed .word-example { animation-delay: .05s; }
+.mastery-badge { font-size: 0.85rem; font-weight: 800; color: var(--purple-text); background: var(--purple-dim); border-radius: 999px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; }
+.mastery-badge.new { color: var(--orange-text); background: var(--orange-dim); }
+.mastery-badge.done { color: var(--green-text); background: var(--green-dim); }
+.saved-stats { color: var(--green-text); }
 .flashcard .flip-hint { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; }
 
 .card-controls { display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }

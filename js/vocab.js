@@ -66,13 +66,7 @@ const VocabView = (() => {
   }
 
   function buildQueue(lessonFilter) {
-    const words = wordsForLesson(lessonFilter);
-    // Prioritize less-mastered words, but keep some randomness so it's not robotic.
-    const withLevel = words.map((w) => ({ w, level: Progress.getItem("vocab", w.id).level }));
-    withLevel.sort((a, b) => a.level - b.level);
-    const lowHalf = withLevel.slice(0, Math.ceil(withLevel.length * 0.7)).map((x) => x.w);
-    const rest = withLevel.slice(Math.ceil(withLevel.length * 0.7)).map((x) => x.w);
-    queue = Util.shuffle(lowHalf).concat(Util.shuffle(rest));
+    queue = Progress.orderForPractice("vocab", wordsForLesson(lessonFilter));
     pos = 0;
   }
 
@@ -83,7 +77,18 @@ const VocabView = (() => {
   }
 
   function progressLine() {
-    return `<div class="progress-line"><span>第 ${Math.min(pos + 1, queue.length)} / ${queue.length} 个</span><span>${queue.length ? "" : "该范围暂无单词"}</span></div>`;
+    if (!queue.length) return `<div class="progress-line"><span>该范围暂无单词</span></div>`;
+    const st = Progress.statsFor("vocab", queue.map((w) => w.id));
+    return `<div class="progress-line"><span class="saved-stats">✏️ 练过 ${st.attempted} / ${queue.length} 个</span><span class="saved-stats">✅ 学会 ${st.mastered} 个</span></div>`;
+  }
+
+  function masteryBadge(id) {
+    const it = Progress.getItem("vocab", id);
+    const max = Progress.MASTERED_LEVEL;
+    if (!it.seen) return `<span class="mastery-badge new">🆕 新单词</span>`;
+    if (it.level >= max) return `<span class="mastery-badge done">✅ 已学会</span>`;
+    const dots = `${"<i class=\"on\"></i>".repeat(it.level)}${"<i></i>".repeat(max - it.level)}`;
+    return `<span class="mastery-badge"><span class="streak-dots">${dots}</span>再记住 ${max - it.level} 次就学会啦</span>`;
   }
 
   function current() {
@@ -107,6 +112,7 @@ const VocabView = (() => {
     container.innerHTML = `
       ${progressLine()}
       <div class="flashcard" id="fcCard">
+        ${masteryBadge(w.id)}
         <div class="word-en">${Util.escapeHtml(w.en)}</div>
         <div class="word-pos">${Util.escapeHtml(w.pos || "")}</div>
         <div class="word-zh">${Util.escapeHtml(w.zh)}${w.note ? `<br><small>${Util.escapeHtml(w.note)}</small>` : ""}</div>
