@@ -2099,5 +2099,97 @@
     {"pic": "🙋", "x": 150, "y": 152, "size": 36, "anim": "bounce", "word": "b850-may"},
     {"pic": "🗓️", "x": 236, "y": 152, "size": 36, "anim": "bob", "word": "b850-will"},
     {"pic": "❗", "x": 320, "y": 152, "size": 36, "anim": "glow", "word": "b850-important"}
+   ]},
+  {"id": "s91", "emoji": "🎬", "title_zh": "上台表演", "title_en": "On Stage", "theme": "classroom", "story": "学校的小舞台上，Mia 的班要演戏：站上舞台，朗读一篇虚构的故事和一段散文，老师来引导，小组长带队，班长当代表，还有一个小小的组织来帮忙。",
+   "words": [
+    {"id": "b850-stage", "en": "stage", "zh": "舞台", "pos": "n", "pic": "🎭", "example": "We act on the stage.", "example_zh": "我们在舞台上表演。"},
+    {"id": "b850-fiction", "en": "fiction", "zh": "小说；虚构的故事", "pos": "n", "pic": "🧚", "example": "I like to read fiction.", "example_zh": "我喜欢读虚构的故事。"},
+    {"id": "b850-prose", "en": "prose", "zh": "散文；文章", "pos": "n", "pic": "📃", "example": "This prose is about spring.", "example_zh": "这篇散文写的是春天。"},
+    {"id": "b850-guide", "en": "guide", "zh": "引导；向导", "pos": "n", "pic": "🧭", "example": "The guide shows us the way.", "example_zh": "向导给我们带路。"},
+    {"id": "b850-lead", "en": "lead", "zh": "带领；领头", "pos": "v", "pic": "🚶", "example": "Tom will lead the line.", "example_zh": "汤姆来带队。"},
+    {"id": "b850-group", "en": "group", "zh": "小组；一群", "pos": "n", "pic": "👨‍👩‍👧‍👦", "example": "Our group sings a song.", "example_zh": "我们小组唱一首歌。"},
+    {"id": "b850-chief", "en": "chief", "zh": "首领；主要的", "pos": "n", "pic": "👑", "example": "The chief of the team is Ann.", "example_zh": "团队的领头人是安。"},
+    {"id": "b850-representative", "en": "representative", "zh": "代表", "pos": "n", "pic": "🙋", "example": "Mia is our class representative.", "example_zh": "米娅是我们的班级代表。"},
+    {"id": "b850-organization", "en": "organization", "zh": "组织；团体", "pos": "n", "pic": "🏢", "example": "The club is a small organization.", "example_zh": "这个俱乐部是个小团体。"}
+   ],
+   "actors": [
+    {"pic": "🎭", "x": 56, "y": 70, "size": 36, "anim": "bounce", "word": "b850-stage"},
+    {"pic": "🧚", "x": 126, "y": 70, "size": 36, "anim": "bob", "word": "b850-fiction"},
+    {"pic": "📃", "x": 196, "y": 70, "size": 36, "anim": "bob", "word": "b850-prose"},
+    {"pic": "🧭", "x": 266, "y": 70, "size": 36, "anim": "walk", "word": "b850-guide"},
+    {"pic": "🚶", "x": 336, "y": 70, "size": 36, "anim": "walk", "word": "b850-lead"},
+    {"pic": "👨‍👩‍👧‍👦", "x": 70, "y": 152, "size": 36, "anim": "sway", "word": "b850-group"},
+    {"pic": "👑", "x": 150, "y": 152, "size": 36, "anim": "glow", "word": "b850-chief"},
+    {"pic": "🙋", "x": 236, "y": 152, "size": 36, "anim": "bounce", "word": "b850-representative"},
+    {"pic": "🏢", "x": 320, "y": 152, "size": 36, "anim": "bob", "word": "b850-organization"}
+   ]},
+  {"id": "s92", "emoji": "📝", "title_zh": "填表格", "title_en": "Filling in a Form", "theme": "classroom", "story": "开学那天，Mia 要填一张表格：写下性别和细节，做出选择，确定的答案要写清楚，小秘密不写上去，把不同的项目分开，再写好地址。",
+   "words": [
+    {"id": "b850-form", "en": "form", "zh": "表格；形式", "pos": "n", "pic": "📝", "example": "Fill in the form, please.", "example_zh": "请填一下这张表。"},
+    {"id": "b850-sex", "en": "sex", "zh": "性别", "pos": "n", "pic": "🚻", "example": "Write your sex on the form: boy or girl.", "example_zh": "在表上写下你的性别：男孩或女孩。"},
+    {"id": "b850-detail", "en": "detail", "zh": "细节", "pos": "n", "pic": "🔍", "example": "Draw every detail.", "example_zh": "把每个细节都画出来。"},
+    {"id": "b850-selection", "en": "selection", "zh": "选择；精选", "pos": "n", "pic": "🗳️", "example": "Make your selection.", "example_zh": "做出你的选择。"},
+    {"id": "b850-certain", "en": "certain", "zh": "确定的", "pos": "adj", "pic": "✅", "example": "I am certain about it.", "example_zh": "我对这件事很确定。"},
+    {"id": "b850-clear", "en": "clear", "zh": "清楚的；清澈的", "pos": "adj", "pic": "💎", "example": "The water is clear.", "example_zh": "水很清澈。"},
+    {"id": "b850-secret", "en": "secret", "zh": "秘密", "pos": "n", "pic": "🤫", "example": "It is our secret.", "example_zh": "这是我们的秘密。"},
+    {"id": "b850-separate", "en": "separate", "zh": "分开的；分开", "pos": "adj", "pic": "✂️", "example": "Put the toys in separate boxes.", "example_zh": "把玩具分开放在不同的盒子里。"},
+    {"id": "b850-place", "en": "place", "zh": "地方；放置", "pos": "n", "pic": "🏠", "example": "Write your place of birth.", "example_zh": "写下你出生的地方。"}
+   ],
+   "actors": [
+    {"pic": "📝", "x": 56, "y": 70, "size": 36, "anim": "bob", "word": "b850-form"},
+    {"pic": "🚻", "x": 126, "y": 70, "size": 36, "anim": "bob", "word": "b850-sex"},
+    {"pic": "🔍", "x": 196, "y": 70, "size": 36, "anim": "wobble", "word": "b850-detail"},
+    {"pic": "🗳️", "x": 266, "y": 70, "size": 36, "anim": "bounce", "word": "b850-selection"},
+    {"pic": "✅", "x": 336, "y": 70, "size": 36, "anim": "glow", "word": "b850-certain"},
+    {"pic": "💎", "x": 70, "y": 152, "size": 36, "anim": "glow", "word": "b850-clear"},
+    {"pic": "🤫", "x": 150, "y": 152, "size": 36, "anim": "shake", "word": "b850-secret"},
+    {"pic": "✂️", "x": 236, "y": 152, "size": 36, "anim": "wobble", "word": "b850-separate"},
+    {"pic": "🏠", "x": 320, "y": 152, "size": 36, "anim": "bob", "word": "b850-place"}
+   ]},
+  {"id": "s93", "emoji": "⏳", "title_zh": "等一等", "title_en": "Waiting", "theme": "street", "story": "街上，Mia 在车站等车：看手表，抬头看飞机的航班，车站里有空位，突然下起雨，公共汽车常常晚点，真麻烦，不过没关系，这样的事情不多。",
+   "words": [
+    {"id": "b850-waiting", "en": "waiting", "zh": "等待", "pos": "n", "pic": "⏳", "example": "I am waiting for the bus.", "example_zh": "我在等公共汽车。"},
+    {"id": "b850-watch", "en": "watch", "zh": "手表；注视", "pos": "n", "pic": "⌚", "example": "My watch says four.", "example_zh": "我的手表显示四点。"},
+    {"id": "b850-flight", "en": "flight", "zh": "航班；飞行", "pos": "n", "pic": "✈️", "example": "The flight leaves at noon.", "example_zh": "航班中午起飞。"},
+    {"id": "b850-space", "en": "space", "zh": "空间；太空", "pos": "n", "pic": "🚀", "example": "There is space for one more.", "example_zh": "还有一个人的空位。"},
+    {"id": "b850-sudden", "en": "sudden", "zh": "突然的", "pos": "adj", "pic": "⚡", "example": "A sudden noise made me jump.", "example_zh": "突然的一声响吓了我一跳。"},
+    {"id": "b850-frequent", "en": "frequent", "zh": "频繁的；常见的", "pos": "adj", "pic": "🔂", "example": "The buses are frequent.", "example_zh": "公共汽车很频繁。"},
+    {"id": "b850-trouble", "en": "trouble", "zh": "麻烦", "pos": "n", "pic": "😟", "example": "I am in trouble.", "example_zh": "我遇到麻烦了。"},
+    {"id": "b850-thing", "en": "thing", "zh": "东西；事情", "pos": "n", "pic": "🎒", "example": "Take your things with you.", "example_zh": "把你的东西带上。"},
+    {"id": "b850-such", "en": "such", "zh": "这样的；如此", "pos": "adj", "pic": "🌧️", "example": "It is such a rainy day.", "example_zh": "今天真是个下雨天。"}
+   ],
+   "actors": [
+    {"pic": "⏳", "x": 56, "y": 70, "size": 36, "anim": "bob", "word": "b850-waiting"},
+    {"pic": "⌚", "x": 126, "y": 70, "size": 36, "anim": "blink", "word": "b850-watch"},
+    {"pic": "✈️", "x": 196, "y": 70, "size": 36, "anim": "fly", "word": "b850-flight"},
+    {"pic": "🚀", "x": 266, "y": 70, "size": 36, "anim": "float", "word": "b850-space"},
+    {"pic": "⚡", "x": 336, "y": 70, "size": 36, "anim": "shake", "word": "b850-sudden"},
+    {"pic": "🔂", "x": 70, "y": 152, "size": 36, "anim": "drive", "word": "b850-frequent"},
+    {"pic": "😟", "x": 150, "y": 152, "size": 36, "anim": "shake", "word": "b850-trouble"},
+    {"pic": "🎒", "x": 236, "y": 152, "size": 36, "anim": "bob", "word": "b850-thing"},
+    {"pic": "🌧️", "x": 320, "y": 152, "size": 36, "anim": "bounce", "word": "b850-such"}
+   ]},
+  {"id": "s94", "emoji": "🫀", "title_zh": "身体怎么工作", "title_en": "How My Body Works", "theme": "body", "story": "Mia 想知道身体是怎么工作的：食物在身体里消化，小冲动让手缩回，人要依靠别人，睡觉是必需的，身体会慢慢调整，大脑有权威，手术要小心，听医生的建议，还要保持清醒。",
+   "words": [
+    {"id": "b850-digestion", "en": "digestion", "zh": "消化", "pos": "n", "pic": "🍽️", "example": "Digestion starts in the mouth.", "example_zh": "消化从嘴里就开始了。"},
+    {"id": "b850-impulse", "en": "impulse", "zh": "冲动；冲力", "pos": "n", "pic": "⚡", "example": "I had an impulse to jump.", "example_zh": "我突然有一股想跳起来的冲动。"},
+    {"id": "b850-dependent", "en": "dependent", "zh": "依赖的", "pos": "adj", "pic": "🍼", "example": "A baby is dependent on its mom.", "example_zh": "婴儿依靠妈妈。"},
+    {"id": "b850-necessary", "en": "necessary", "zh": "必需的", "pos": "adj", "pic": "💧", "example": "Water is necessary for life.", "example_zh": "水对生命是必需的。"},
+    {"id": "b850-adjustment", "en": "adjustment", "zh": "调整", "pos": "n", "pic": "🎚️", "example": "Make an adjustment to the seat.", "example_zh": "把座位调整一下。"},
+    {"id": "b850-authority", "en": "authority", "zh": "权威；当局", "pos": "n", "pic": "🧑‍⚖️", "example": "The doctor is an authority on health.", "example_zh": "医生是健康方面的权威。"},
+    {"id": "b850-operation", "en": "operation", "zh": "手术；操作", "pos": "n", "pic": "🏥", "example": "The operation was a success.", "example_zh": "手术很成功。"},
+    {"id": "b850-suggestion", "en": "suggestion", "zh": "建议", "pos": "n", "pic": "💡", "example": "I have a suggestion.", "example_zh": "我有一个建议。"},
+    {"id": "b850-conscious", "en": "conscious", "zh": "清醒的；有意识的", "pos": "adj", "pic": "👁️", "example": "The patient is conscious.", "example_zh": "病人是清醒的。"}
+   ],
+   "actors": [
+    {"pic": "🍽️", "x": 56, "y": 70, "size": 36, "anim": "bob", "word": "b850-digestion"},
+    {"pic": "⚡", "x": 126, "y": 70, "size": 36, "anim": "bounce", "word": "b850-impulse"},
+    {"pic": "🍼", "x": 196, "y": 70, "size": 36, "anim": "bob", "word": "b850-dependent"},
+    {"pic": "💧", "x": 266, "y": 70, "size": 36, "anim": "glow", "word": "b850-necessary"},
+    {"pic": "🎚️", "x": 336, "y": 70, "size": 36, "anim": "wobble", "word": "b850-adjustment"},
+    {"pic": "🧑‍⚖️", "x": 70, "y": 152, "size": 36, "anim": "bob", "word": "b850-authority"},
+    {"pic": "🏥", "x": 150, "y": 152, "size": 36, "anim": "bob", "word": "b850-operation"},
+    {"pic": "💡", "x": 236, "y": 152, "size": 36, "anim": "blink", "word": "b850-suggestion"},
+    {"pic": "👁️", "x": 320, "y": 152, "size": 36, "anim": "blink", "word": "b850-conscious"}
    ]}
 ]}
