@@ -318,6 +318,75 @@ const SceneArt = (() => {
       ${marks[part]}</g>`;
   }
 
+  // --- places, tools, materials and directions (drawn in a 100-unit box, centered) ---
+  const U = (s, body) => `<g transform="scale(${s / 100})">${body}</g>`;
+  const blk = (x, y, w, h, f = "#B07A4F") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${f}" stroke="rgba(0,0,0,.28)" stroke-width="2.5"/>`;
+  const ball = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#E5484D" stroke="#B3262B" stroke-width="2.5"/>`;
+  const arr = (x1, y1, x2, y2, c = "#3B82F6") => {
+    const a = Math.atan2(y2 - y1, x2 - x1), h = 9, p = (d) => `${x2 - h * Math.cos(a + d)} ${y2 - h * Math.sin(a + d)}`;
+    return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${c}" stroke-width="4" stroke-linecap="round"/><path d="M${x2} ${y2} L${p(.5)} L${p(-.5)} Z" fill="${c}"/>`;
+  };
+  const line = (d, c, w = 6, extra = "") => `<path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none" ${extra}/>`;
+  const rel = {
+    in: () => blk(-32, -22, 64, 54, "#8A5A34") + ball(0, 4, 12) + blk(-32, 6, 64, 26),
+    on: () => blk(-36, 10, 72, 14) + blk(-28, 24, 10, 20) + blk(18, 24, 10, 20) + ball(0, -4, 14),
+    under: () => blk(-36, -26, 72, 14) + blk(-28, -12, 10, 20) + blk(18, -12, 10, 20) + ball(0, 22, 14),
+    over: () => blk(-22, 10, 44, 28) + ball(0, -22, 11) + line("M-34 2 Q0 -48 34 2", "#3B82F6", 3.5, 'stroke-dasharray="6 5"'),
+    between: () => blk(-46, -16, 24, 46) + blk(22, -16, 24, 46) + ball(0, 14, 13),
+    near: () => blk(-40, -10, 34, 40) + ball(14, 16, 13),
+    far: () => blk(-46, -4, 28, 32) + ball(38, 14, 8) + line("M-14 14 L28 14", "#3B82F6", 3, 'stroke-dasharray="5 5"'),
+    through: () => blk(-8, -42, 16, 36) + blk(-8, 8, 16, 36) + ball(-32, 0, 9) + arr(-18, 0, 44, 0),
+    across: () => `<rect x="-50" y="-12" width="100" height="24" fill="#5CB8F5"/><path d="M-50 -12 H50 M-50 12 H50" stroke="#A9DDFB" stroke-width="3"/>` + ball(0, 36, 9) + arr(0, 28, 0, -40),
+  };
+  const pos = {
+    front: () => blk(-22, -34, 44, 46, "#9AA0AB") + ball(0, 22, 15),
+    back: () => ball(0, -14, 15) + blk(-26, -4, 52, 40, "#9AA0AB"),
+    side: () => blk(-38, -22, 38, 46, "#9AA0AB") + ball(26, 2, 13) + arr(8, -32, 36, -32),
+    top: () => blk(-24, 14, 48, 22) + blk(-24, -8, 48, 22) + blk(-24, -30, 48, 22, "#E5484D"),
+    middle: () => blk(-48, -14, 28, 40) + blk(-14, -14, 28, 40, "#E5484D") + blk(20, -14, 28, 40),
+    edge: () => blk(-44, -2, 76, 16) + ball(32, -14, 12) + arr(36, 6, 36, 40, "#3B82F6"),
+    end: () => [0, 1, 2, 3, 4].map((i) => blk(-48 + i * 19, -14, 15, 40, i === 4 ? "#E5484D" : "#B07A4F")).join("") + arr(-44, -28, 44, -28),
+    opposite: () => blk(-46, -16, 24, 44, "#4C9AFF") + blk(22, -16, 24, 44, "#E5484D") + arr(-16, 6, -2, 6) + arr(16, 6, 2, 6),
+    among: () => [[-42, -34], [20, -34], [-42, 12], [20, 12], [-10, -44]].map(([x, y]) => blk(x, y, 22, 22)).join("") + ball(0, -4, 12),
+  };
+  const compass = (letter, angle) => ((s) => U(s, `<circle r="44" fill="#fff" stroke="#8FB8DA" stroke-width="5"/><g transform="rotate(${angle})">${arr(0, 24, 0, -34, "#E5484D")}</g><text y="${angle === 180 ? -22 : 30}" text-anchor="middle" dominant-baseline="central" font-size="26" font-weight="800" font-family="sans-serif" fill="#2F6FD6">${letter}</text>`));
+  const ingot = (c) => (s) => U(s, `<path d="M-38 20 L-24 -14 L30 -14 L42 20 Z" fill="${c}" stroke="rgba(0,0,0,.3)" stroke-width="3" stroke-linejoin="round"/><path d="M-24 -14 L-16 -30 L34 -30 L30 -14 Z" fill="${c}" stroke="rgba(0,0,0,.3)" stroke-width="3" stroke-linejoin="round" opacity=".8"/><path d="M-14 0 L8 0" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/>`);
+  const lump = (c) => `<path d="M-34 14 L-24 -18 L6 -30 L34 -8 L38 18 L0 28 Z" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="3" stroke-linejoin="round"/><path d="M-14 -6 L4 -16" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".45"/>`;
+  Object.assign(ICONS, {
+    ...Object.fromEntries(Object.entries(rel).map(([k, f]) => ["rel_" + k, (s) => U(s, f())])),
+    ...Object.fromEntries(Object.entries(pos).map(([k, f]) => ["pos_" + k, (s) => U(s, f())])),
+    north: compass("N", 0), south: compass("S", 180), east: compass("E", 90), west: compass("W", -90),
+    iron: ingot("#6B6F7A"), steel: ingot("#B8C4D6"), gold: ingot("#FFC83D"), silver: ingot("#E3E8EE"), copper: ingot("#D2784A"), brass: ingot("#D9B44A"),
+    stone: (s) => U(s, lump("#9AA0AB")),
+    coal: (s) => U(s, `<g transform="translate(-8 6) scale(.8)">${lump("#2B2D3A")}</g><g transform="translate(20 -12) scale(.5)">${lump("#3A3D4B")}</g>`),
+    hollow: (s) => U(s, `<rect x="-26" y="-12" width="52" height="56" rx="12" fill="#9B6B43" stroke="#6B4528" stroke-width="3"/><ellipse cx="0" cy="12" rx="11" ry="17" fill="#2E1B0E"/><circle cy="-22" r="30" fill="#6CC96F" stroke="#4DAF50" stroke-width="3"/>`),
+    prison: (s) => U(s, `<rect x="-38" y="-38" width="76" height="76" rx="6" fill="#8C8F99" stroke="#6C7080" stroke-width="3"/><rect x="-26" y="-26" width="52" height="52" fill="#2B2D3A"/>${[-16, -5, 6, 17].map((x) => `<rect x="${x}" y="-26" width="5" height="52" fill="#C9CED8"/>`).join("")}`),
+    wheel: (s) => U(s, `<circle r="38" fill="#2B2D3A"/><circle r="24" fill="#CBD2DC" stroke="#8C95A6" stroke-width="3"/>${[0, 60, 120].map((a) => `<path d="M-24 0 H24" transform="rotate(${a})" stroke="#8C95A6" stroke-width="4"/>`).join("")}<circle r="6" fill="#6C7587"/>`),
+    brake: (s) => U(s, `<rect x="-6" y="24" width="12" height="22" fill="#8C95A6"/><rect x="-28" y="-38" width="56" height="66" rx="10" fill="#4A4F5C" stroke="#2B2D3A" stroke-width="3"/>${[-24, -10, 4, 18].map((y) => `<path d="M-20 ${y} H20" stroke="#8C95A6" stroke-width="4" stroke-linecap="round"/>`).join("")}`),
+    nail: (s) => U(s, `<rect x="-14" y="-42" width="28" height="8" rx="3" fill="#8C95A6"/><path d="M-4 -34 H4 V30 L0 44 L-4 30 Z" fill="#B9C0CC" stroke="#6C7587" stroke-width="2.5" stroke-linejoin="round"/>`),
+    needle: (s) => U(s, `<g transform="rotate(35)"><path d="M-2 -40 H2 L2 40 L0 46 L-2 40 Z" fill="#CBD2DC" stroke="#8C95A6" stroke-width="2"/><ellipse cy="-30" rx="3" ry="8" fill="#fff" stroke="#8C95A6" stroke-width="2"/></g>${line("M-30 -30 Q-10 -48 4 -22", "#E5484D", 3.5)}`),
+    hook: (s) => U(s, line("M0 -42 V8 Q0 34 -18 30 Q-28 26 -24 12", "#8C95A6", 8)),
+    wire: (s) => U(s, line("M-42 12 C-32 -34 -12 34 0 -2 S30 -34 42 10", "#E08A2D", 6) + `<circle cx="-42" cy="12" r="5" fill="#B9C0CC"/><circle cx="42" cy="10" r="5" fill="#B9C0CC"/>`),
+    bucket: (s) => U(s, `<path d="M-30 -20 L30 -20 L22 34 L-22 34 Z" fill="#4C9AFF" stroke="#2F6FD6" stroke-width="3" stroke-linejoin="round"/><ellipse cy="-20" rx="30" ry="8" fill="#9CCBFF" stroke="#2F6FD6" stroke-width="3"/>${line("M-30 -20 Q0 -66 30 -20", "#6C7587", 3.5)}`),
+    cork: (s) => U(s, `<path d="M-12 -40 H12 V-14 Q30 -6 30 14 V36 H-30 V14 Q-12 -6 -12 -14 Z" fill="#9ED9C0" stroke="#4FA583" stroke-width="3" stroke-linejoin="round"/><rect x="-11" y="-52" width="22" height="18" rx="5" fill="#D9A066" stroke="#A86F45" stroke-width="2.5"/><circle cx="-4" cy="-44" r="2" fill="#A86F45"/><circle cx="4" cy="-40" r="2" fill="#A86F45"/>`),
+    pipe: (s) => U(s, line("M-34 -24 H12 V32", "#8C95A6", 18) + line("M-34 -24 H12 V32", "#B9C0CC", 8) + `<rect x="-42" y="-34" width="8" height="20" rx="2" fill="#6C7587"/><rect x="2" y="30" width="20" height="8" rx="2" fill="#6C7587"/>`),
+    lid: (s) => U(s, `<ellipse cy="14" rx="42" ry="12" fill="#8C95A6"/><path d="M-34 14 Q-30 -22 0 -22 Q30 -22 34 14 Z" fill="#CBD2DC" stroke="#8C95A6" stroke-width="3"/><circle cy="-30" r="7" fill="#E5484D"/>`),
+    cotton: (s) => U(s, line("M0 44 V6", "#4DAF50", 5) + [[-16, -10], [14, -14], [0, 8]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#fff" stroke="#D5D5E8" stroke-width="3"/>`).join("") + `<path d="M-18 22 L0 40 L18 22 Z" fill="#8B6B43"/>`),
+    knot: (s) => U(s, `<ellipse rx="26" ry="14" transform="rotate(35)" fill="none" stroke="#C98A55" stroke-width="8"/><ellipse rx="26" ry="14" transform="rotate(-35)" fill="none" stroke="#9B6B43" stroke-width="8"/>` + line("M-22 24 L-42 40 M22 24 L42 40", "#C98A55", 7)),
+    cord: (s) => U(s, line("M-40 -8 C-22 -40 0 24 20 -8 S36 12 36 12", "#D9473E", 6) + `<circle cx="-40" cy="-8" r="6" fill="#FFC83D"/><path d="M36 12 L30 40 M36 12 L40 40" stroke="#FFC83D" stroke-width="4" stroke-linecap="round"/>`),
+    stitch: (s) => U(s, `<rect x="-40" y="-26" width="80" height="52" rx="6" fill="#FFE4A8" stroke="#E2B968" stroke-width="3"/>` + line("M-30 0 H30", "#E5484D", 4, 'stroke-dasharray="9 7"')),
+    skirt: (s) => U(s, `<path d="M-14 -34 H14 L42 34 H-42 Z" fill="#FF8FB1" stroke="#E56F96" stroke-width="3" stroke-linejoin="round"/><rect x="-15" y="-38" width="30" height="9" rx="3" fill="#E56F96"/>${[-14, 0, 14].map((x) => `<path d="M${x / 2} -26 L${x * 1.5} 30" stroke="#E56F96" stroke-width="2.5"/>`).join("")}`),
+    pocket: (s) => U(s, `<rect x="-40" y="-38" width="80" height="76" rx="8" fill="#6EA8FF" stroke="#4C86D9" stroke-width="3"/><path d="M-18 -8 H18 V20 L0 30 L-18 20 Z" fill="#4C86D9" stroke="#2F6FD6" stroke-width="2.5" stroke-linejoin="round"/>` + line("M-12 0 H12", "#fff", 3, 'stroke-dasharray="5 4"')),
+    comb: (s) => U(s, `<rect x="-42" y="-24" width="84" height="18" rx="6" fill="#FF8FB1" stroke="#E56F96" stroke-width="2.5"/>${[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => `<rect x="${-40 + i * 9.4}" y="-6" width="5" height="32" rx="2.5" fill="#FF8FB1"/>`).join("")}`),
+    dust: (s) => U(s, `<g fill="#C9CED8" stroke="#A9B0BE" stroke-width="2.5"><circle cx="-18" cy="12" r="16"/><circle cx="10" cy="4" r="20"/><circle cx="26" cy="22" r="12"/></g><g fill="#A9B0BE"><circle cx="-30" cy="-22" r="3.5"/><circle cx="-8" cy="-32" r="3"/><circle cx="20" cy="-26" r="4"/><circle cx="36" cy="-8" r="3"/></g>`),
+    drain: (s) => U(s, `<circle r="40" fill="#CBD2DC" stroke="#8C95A6" stroke-width="4"/><circle r="30" fill="#4A4F5C"/>${[-16, -5, 6, 17].map((x) => `<rect x="${x}" y="-26" width="5" height="52" fill="#9AA0AB"/>`).join("")}`),
+    wood: (s) => U(s, `<rect x="-42" y="-20" width="66" height="40" fill="#A86F45" stroke="#7A4C2B" stroke-width="3"/><path d="M-30 -8 H12 M-34 6 H8" stroke="#7A4C2B" stroke-width="2.5"/><ellipse cx="24" cy="0" rx="14" ry="22" fill="#E0AE76" stroke="#7A4C2B" stroke-width="3"/><ellipse cx="24" cy="0" rx="7" ry="12" fill="none" stroke="#A86F45" stroke-width="2.5"/>`),
+    paste: (s) => U(s, `<rect x="-42" y="-14" width="68" height="28" rx="9" fill="#fff" stroke="#BCC6D6" stroke-width="3"/><rect x="26" y="-9" width="16" height="18" rx="3" fill="#3B82F6"/><rect x="-42" y="-14" width="14" height="28" rx="4" fill="#3B82F6"/><path d="M42 0 Q50 -2 48 12" stroke="#3B82F6" stroke-width="0"/><ellipse cx="-4" cy="30" rx="26" ry="8" fill="#fff" stroke="#BCC6D6" stroke-width="3"/>`),
+    crack: (s) => U(s, `<rect x="-38" y="-34" width="76" height="68" rx="6" fill="#E7EAF0" stroke="#A9B0BE" stroke-width="3"/>` + line("M-4 -34 L6 -14 L-8 -2 L8 14 L-2 34", "#2B2D3A", 4)),
+    push: (s) => U(s, blk(-6, -22, 42, 44) + arr(-46, 0, -12, 0, "#3B82F6")),
+    pull: (s) => U(s, blk(6, -22, 42, 44) + line("M6 0 H-26", "#9B6B43", 4) + arr(-24, 0, -46, 0, "#3B82F6")),
+  });
+
   function contentFor(pic, size) {
     if (pic.startsWith("@")) return (ICONS[pic.slice(1)] || ICONS.spot)(size);
     return `<text font-size="${size}" text-anchor="middle" dominant-baseline="central">${esc(pic)}</text>`;
