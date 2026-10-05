@@ -55,6 +55,7 @@ python3 -m http.server 8000
 - 单词表来自公开的 Ogden 原表（`tools/basic850_words.txt`）；中文释义、例句、场景故事都是为本站原创的，没有使用其他项目的释义或例句。
 - 场景插画是原创的 SVG 卡通背景加 emoji 角色，带小动画，代码在 `js/sceneart.js`。
 - 内容在 `data/basic850.json`，按场景分组，每个词有中文、词性、图片、例句和在图里的位置。目前上线第一批 10 个场景、90 个词，其余分批补充。
+- 剩下的 760 个词已经分好组，写在 `tools/basic850_plan.json`：84 个场景、分 5 批，每批 20 个场景。还要先在 `js/sceneart.js` 里画 3 个新背景：livingroom、sea、workshop。做好一个场景后，把它加进 `data/basic850.json`，并沿用计划里的场景编号。
 - 这个板块不受课件词汇范围限制，所以 `check_data.py` 不检查它；改完后运行 `python3 tools/check_basic850.py`，会检查每个词都在 850 词表里、没有重复、图里的东西都对应到单词。
 - 练习方式：看图学词、看图选词、拼写挑战、英汉互译；答对加星星，答错进错题本，和课件单词共用学习进度。
 

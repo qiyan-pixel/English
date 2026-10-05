@@ -34,7 +34,24 @@ for sc in data["scenes"]:
         if "word" in a and a["word"] not in ids:
             errors.append(f"{sc['id']}: actor {a['pic']} points at unknown word {a['word']}")
 
+# The plan for upcoming scenes must cover every remaining word exactly once.
+plan = json.loads((HERE / "basic850_plan.json").read_text(encoding="utf-8"))
+made = {sc["id"] for sc in data["scenes"]}
+planned = {}
+for sc in plan["scenes"]:
+    if sc["id"] in made:
+        continue
+    for w in sc["words"]:
+        if w in seen:
+            errors.append(f"plan {sc['id']}: '{w}' is already taught in {seen[w]}")
+        elif w in planned:
+            errors.append(f"plan {sc['id']}: '{w}' is also planned in {planned[w]}")
+        planned[w] = sc["id"]
+missing = WORDS - set(seen) - set(planned)
+if missing:
+    errors.append("words neither taught nor planned: " + ", ".join(sorted(missing)))
+
 if errors:
     print("\n".join(errors))
     sys.exit(1)
-print(f"OK: {len(seen)} of {len(WORDS)} Basic English words in {len(data['scenes'])} scenes.")
+print(f"OK: {len(seen)} of {len(WORDS)} Basic English words in {len(data['scenes'])} scenes; the other {len(planned)} are planned in tools/basic850_plan.json.")
