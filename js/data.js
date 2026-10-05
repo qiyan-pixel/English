@@ -4,15 +4,15 @@ const AppData = (() => {
 
   async function loadAll() {
     if (loaded) return loaded;
-    const files = ["lessons", "vocabulary", "sentences", "translations", "dialogues", "questions"];
+    const files = ["lessons", "vocabulary", "sentences", "translations", "dialogues", "questions", "basic850"];
     const results = await Promise.all(
       files.map((f) => fetch(`data/${f}.json`).then((r) => {
         if (!r.ok) throw new Error(`Failed to load data/${f}.json (${r.status})`);
         return r.json();
       }))
     );
-    const [lessons, vocabulary, sentences, translations, dialogues, questions] = results;
-    loaded = { lessons, vocabulary, sentences, translations, dialogues, questions };
+    const [lessons, vocabulary, sentences, translations, dialogues, questions, basic850] = results;
+    loaded = { lessons, vocabulary, sentences, translations, dialogues, questions, basic850 };
     return loaded;
   }
 
@@ -21,7 +21,18 @@ const AppData = (() => {
     return loaded;
   }
 
-  return { loadAll, get };
+  // Looks up an item by progress category + id, including Basic 850 words
+  // (which are stored under "vocab" with "b850-" ids).
+  function findItem(category, id) {
+    const d = get();
+    if (category === "vocab") {
+      return d.vocabulary.find((x) => x.id === id) || d.basic850.scenes.flatMap((s) => s.words).find((x) => x.id === id);
+    }
+    const list = { sentence: d.sentences, translation: d.translations }[category];
+    return list && list.find((x) => x.id === id);
+  }
+
+  return { loadAll, get, findItem };
 })();
 
 // Small shared helpers for grading typed answers, used by vocab/sentence/translation modes.

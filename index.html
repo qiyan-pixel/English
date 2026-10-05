@@ -36,6 +36,7 @@
       <li><button class="nav-item c-purple" data-view="translate"><span class="nav-icon">🔁</span><span class="nav-label">翻译</span><span class="nav-sub">Translate</span></button></li>
       <li><button class="nav-item c-teal" data-view="dialogue"><span class="nav-icon">💬</span><span class="nav-label">对话</span><span class="nav-sub">Talk</span></button></li>
       <li><button class="nav-item c-red" data-view="mistakes"><span class="nav-icon">📕<span class="nav-badge" id="mistakeBadge" hidden></span></span><span class="nav-label">错题</span><span class="nav-sub">Mistakes</span></button></li>
+      <li><button class="nav-item c-teal" data-view="basic850"><span class="nav-icon">🌍</span><span class="nav-label">850词</span><span class="nav-sub">Basic 850</span></button></li>
       <li><button class="nav-item c-green" data-view="progress"><span class="nav-icon">🏆</span><span class="nav-label">成绩</span><span class="nav-sub">Progress</span></button></li>
     </ul>
   </nav>
@@ -63,6 +64,11 @@
         <button class="game-tile c-teal" data-view="translate"><span class="gt-emoji">🔁</span><span class="gt-title">翻译小能手</span><span class="gt-sub">中文英文变变变</span></button>
         <button class="game-tile c-green" data-view="dialogue"><span class="gt-emoji">💬</span><span class="gt-title">对话练习</span><span class="gt-sub">听听他们在说什么</span></button>
       </div>
+      <button class="feature-card" id="b850Feature">
+        <span class="fc-art" aria-hidden="true">🌅🐄☂️</span>
+        <span class="fc-text"><b>🌍 日常英语 850 词</b><small>看动画场景学单词：起床、上学、公园、农场……</small><span class="fc-stat" id="b850FeatureStat"></span></span>
+        <span class="fc-go">去看看 ➡️</span>
+      </button>
       <h2 class="section-title">📚 我的课程</h2>
       <div id="lessonCards" class="lesson-cards"></div>
     </section>
@@ -110,6 +116,19 @@
         <button class="mode-tab" data-mode="questions">❓ 扩展问答</button>
       </div>
       <div id="dlgArea" class="practice-area"></div>
+    </section>
+
+    <!-- BASIC 850 -->
+    <section id="view-basic850" class="view">
+      <h1>🌍 日常英语 850 词 <small>Basic English 850</small></h1>
+      <p class="subtitle">英国语言学家 C. K. Ogden 精选的 850 个最常用英语单词。每个场景都是一幅会动的图画，点一点就能学单词！</p>
+      <div class="mode-tabs" id="b850ModeTabs">
+        <button class="mode-tab active" data-mode="learn">🖼️ 看图学词</button>
+        <button class="mode-tab" data-mode="pic">🎯 看图选词</button>
+        <button class="mode-tab" data-mode="spell">✍️ 拼写挑战</button>
+        <button class="mode-tab" data-mode="trans">🔁 英汉互译</button>
+      </div>
+      <div id="b850Area" class="practice-area b850-area"></div>
     </section>
 
     <!-- MISTAKES -->
@@ -170,6 +189,8 @@
 <script src="js/translate.js"></script>
 <script src="js/dialogue.js"></script>
 <script src="js/mistakes.js"></script>
+<script src="js/sceneart.js"></script>
+<script src="js/basic850.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -16,6 +16,7 @@
   // ---------- Navigation ----------
   function switchView(view, mode) {
     currentView = view;
+    document.body.dataset.view = view;
     if (mode) markModeTab(view, mode);
     $all(".view").forEach((v) => v.classList.remove("active"));
     $(`#view-${view}`).classList.add("active");
@@ -42,6 +43,7 @@
     else if (view === "translate") TranslateView.init($("#transArea"), lessonFilter);
     else if (view === "dialogue") DialogueView.init($("#dlgArea"), lessonFilter);
     else if (view === "mistakes") MistakesView.init($("#mistakeArea"), lessonFilter);
+    else if (view === "basic850") Basic850View.init($("#b850Area"));
     else if (view === "home") renderHome();
     else if (view === "progress") renderProgress();
   }
@@ -104,9 +106,7 @@
 
   function onMistakeCleared(e) {
     const { category, id } = e.detail;
-    const { vocabulary, sentences, translations } = AppData.get();
-    const list = { vocab: vocabulary, sentence: sentences, translation: translations }[category];
-    const item = list.find((x) => x.id === id);
+    const item = AppData.findItem(category, id);
     const name = item ? (category === "translation" ? item.zh : item.en) : "";
     toast(`🎓 「${name.length > 24 ? name.slice(0, 24) + "…" : name}」连续答对 ${Progress.MISTAKE_CLEAR_STREAK} 次，从错题本毕业啦！`);
   }
@@ -152,6 +152,8 @@
       ? `<button class="mistake-banner" id="mistakeBannerBtn"><span class="mb-emoji">📕</span><span class="mb-text"><b>错题本里有 ${mistakes} 道题</b><small>每道连续答对 3 次就能消灭它！</small></span><span class="mb-go">去练习 ➡️</span></button>`
       : "";
     $("#mistakeBannerBtn")?.addEventListener("click", () => switchView("mistakes"));
+    const b850 = Progress.statsFor("vocab", Basic850View.allWords().map((w) => w.id));
+    $("#b850FeatureStat").textContent = `已上线 ${b850.total} 个词 · 学会 ${b850.mastered} 个`;
     $("#lessonCards").innerHTML = lessons.map((l, i) => {
       const ids = vocabulary.filter((v) => v.lesson === l.id).map((v) => v.id);
       const stats = Progress.statsFor("vocab", ids);
@@ -187,6 +189,7 @@
       statPill("✍️", `${sp.mastered}<small>/${sp.total}</small>`, "能完整拼写", "orange") +
       statPill("🗣️", `${s.attempted}<small>/${s.total}</small>`, "练过的句子", "pink") +
       statPill("🔁", `${t.attempted}<small>/${t.total}</small>`, "练过的翻译", "purple") +
+      statPill("🌍", `${Progress.statsFor("vocab", Basic850View.allWords().map((w) => w.id)).mastered}<small>/${Basic850View.allWords().length}</small>`, "850词 学会", "teal") +
       statPill("📕", Progress.getMistakes().length, "错题本里的题", "red") +
       statPill("🔥", Progress.getStreak(), "连续学习天数", "green");
     $("#progressByLesson").innerHTML = lessons.map((l, i) => {
@@ -282,6 +285,7 @@
 
   // ---------- Boot ----------
   async function boot() {
+    document.body.dataset.view = "home";
     try {
       await AppData.loadAll();
     } catch (err) {
@@ -301,6 +305,8 @@
     wireModeTabs("#sentModeTabs", (m) => SentencesView.setMode(m));
     wireModeTabs("#transModeTabs", (m) => TranslateView.setDirection(m));
     wireModeTabs("#dlgModeTabs", (m) => DialogueView.setMode(m));
+    wireModeTabs("#b850ModeTabs", (m) => Basic850View.setMode(m));
+    $("#b850Feature").addEventListener("click", () => switchView("basic850"));
     renderHome();
   }
 

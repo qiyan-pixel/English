@@ -16,9 +16,7 @@ const MistakesView = (() => {
   const keyOf = (m) => `${m.category}:${m.id}`;
 
   function lookup(m) {
-    const { vocabulary, sentences, translations } = AppData.get();
-    const list = { vocab: vocabulary, sentence: sentences, translation: translations }[m.category];
-    return list && list.find((x) => x.id === m.id);
+    return AppData.findItem(m.category, m.id);
   }
 
   // Lowest streak first, so the shakiest items come up most often.
